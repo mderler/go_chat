@@ -1,17 +1,18 @@
 package main
 
 import (
-	"net/http"
-
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"github.com/mderler/go_chat/handler"
 )
 
 func main() {
 	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
-	})
+
+	e.Use(middleware.Logger())
+
+	indexHandler := handler.IndexHandler{}
+	e.GET("/", indexHandler.ShowIndex)
 
 	userHandler := handler.UserHandler{}
 	e.GET("/user", userHandler.ShowUser)
