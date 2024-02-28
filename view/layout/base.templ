@@ -1,5 +1,12 @@
 package layout
 
+script darkmode() {
+    const darkMode = localStorage.getItem('darkMode');
+    if (darkMode === 'enabled') {
+        document.body.classList.add('dark');
+    }
+}
+
 templ Base() {
 	<html>
 		<head>
@@ -8,7 +15,7 @@ templ Base() {
 			<title>Chat</title>
 			<link href="/style.css" rel="stylesheet"/>
 		</head>
-		<body>
+		<body onload={ darkmode() }>
 			{ children... }
 		</body>
 	</html>
