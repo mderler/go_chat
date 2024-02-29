@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.base-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+}
+
+.chat-grid {
+    display: grid;
+    grid-template-rows: 1fr auto;
+}
+
+.chat-input {
+    height: 1.1rem;
+    line-height: 1rem;
+    resize: none;
+}
