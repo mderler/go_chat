@@ -16,25 +16,61 @@
             <input id="darkMode" type="checkbox" onchange="onDarkModeChange" />
           </div>
         </div>
-        <ul class="flex flex-col">
-          <div>A</div>
-          <div>B</div>
-          <div>C</div>
-          <div>D</div>
+        <hr />
+        <ul class="flex flex-col gap-2 mx-2 mt-2">
+          <div class="border border-black rounded-md flex px-1 py-1">
+            <div
+              class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-center"
+            >
+              SD
+            </div>
+            <span>Stefan Derler</span>
+          </div>
         </ul>
       </section>
-      <section class="bg-slate-600 mx-10 mt-10 mb-10 rounded-xl border-2 border-slate-900 dark:border-white">
+      <section
+        class="bg-slate-600 mx-10 mt-10 mb-10 rounded-xl border-2 border-slate-900 dark:border-white"
+      >
         <div class="chat-grid h-full border-inherit">
-          <div class="border-inherit">
-            <div class="max-w-64 ml-2 mt-2 border border-black rounded-md">
-              <div class="font-bold">Stefan Derler</div>
-              <p>This is a message</p>
+          <div class="border-inherit flex flex-col">
+            <div
+              class="max-w-96 self-start ml-2 mt-2 px-1 border border-black rounded-md bg-slate-800"
+            >
+              <div class="font-bold text-green-300">Stefan Derler</div>
+              <p class="text-white">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores
+                veritatis quibusdam fugit odio laborum quaerat iure rem nisi
+                quidem quasi itaque ut, harum commodi ea in distinctio quod
+                dolor placeat.
+              </p>
+            </div>
+            <div
+              class="max-w-96 self-end mr-2 mt-2 px-1 border border-black rounded-md bg-slate-800"
+            >
+              <div class="font-bold text-pink-400">Matthias Derler</div>
+              <p class="text-white">
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Maiores
+                veritatis quibusdam fugit odio laborum quaerat iure rem nisi
+                quidem quasi itaque ut, harum commodi ea in distinctio quod
+                dolor placeat.
+              </p>
+            </div>
+            <div
+              class="max-w-96 self-end mr-2 mt-1 px-1 border border-black rounded-md bg-slate-800"
+            >
+              <p class="text-white">Lorem ipsum elit.</p>
             </div>
           </div>
-          <div class="mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1">
-            <textarea class="w-full bg-slate-900 text-white chat-input outline-none" placeholder="Type a message..."></textarea>
+          <div
+            class="mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1"
+          >
+            <textarea
+              class="w-full bg-slate-900 text-white chat-input outline-none"
+              placeholder="Type a message..."
+            ></textarea>
           </div>
         </div>
+      </section>
     </div>
     <script>
       function main() {
