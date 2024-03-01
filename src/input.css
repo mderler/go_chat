@@ -5,6 +5,7 @@
 .base-grid {
     display: grid;
     grid-template-columns: auto 1fr;
+
 }
 
 .chat-grid {
@@ -13,7 +14,17 @@
 }
 
 .chat-input {
-    height: 1.1rem;
+    height: 2rem;
     line-height: 1rem;
     resize: none;
+}
+
+@layer components {
+    .left-chat {
+        @apply xl:max-w-xl md:max-w-md self-start ml-2 mt-2 px-1 border border-black rounded-md bg-slate-800;
+    }
+
+    .right-chat {
+        @apply xl:max-w-xl md:max-w-md self-end mr-2 mt-2 px-1 border border-black rounded-md bg-slate-800;
+    }
 }
