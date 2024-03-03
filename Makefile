@@ -11,3 +11,15 @@ build:
 .PHONY: air
 air:
 	@go run github.com/cosmtrek/air@latest
+
+.PHONY: create-migration
+create-migration:
+	go run github.com/pressly/goose/v3/cmd/goose@latest -dir ./migrations create $(name) sql
+
+.PHONY: apply-migrations
+apply-migrations:
+	go run github.com/pressly/goose/v3/cmd/goose@latest -dir ./migrations sqlite3 chat.db up
+
+.PHONY: sqlc-gen
+sqlc-gen:
+	go run github.com/sqlc-dev/sqlc/cmd/sqlc@latest generate
