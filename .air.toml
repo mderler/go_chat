@@ -3,7 +3,7 @@ tmp_dir = "bin"
 
 [build]
   bin = "./bin/main"
-  cmd = "go run github.com/a-h/templ/cmd/templ@latest fmt view && make build"
+  cmd = "make build"
   delay = 1000
   exclude_dir = ["tmp", "public"]
   exclude_regex = [".*_templ.go"]

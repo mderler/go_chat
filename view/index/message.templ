@@ -1,0 +1,15 @@
+package index
+
+templ message(author string, message string, left bool) {
+	if left {
+		<div class="left-chat">
+			<div class="font-bold text-green-300">{ author }</div>
+			<p class="dark:text-white">{ message }</p>
+		</div>
+	} else {
+		<div class="right-chat">
+			<div class="font-bold text-pink-400">{ author }</div>
+			<p class="dark:text-white">{ message }</p>
+		</div>
+	}
+}
