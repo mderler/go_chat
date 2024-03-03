@@ -8,5 +8,9 @@ import (
 type IndexHandler struct{}
 
 func (h *IndexHandler) ShowIndex(c echo.Context) error {
-	return render(c, index.Show())
+	messages := []index.Message{
+		{Author: "Stefan Derler", Message: "Hello World!", Left: true},
+		{Author: "Matthias Derler", Message: "Hello World!", Left: false},
+	}
+	return render(c, index.Show(messages))
 }

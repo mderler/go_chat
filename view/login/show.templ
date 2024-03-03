@@ -1,0 +1,29 @@
+package login
+
+import "github.com/mderler/go_chat/view/layout"
+
+templ ShowLogin() {
+	@layout.Base() {
+		<div class="h-screen flex justify-center items-center">
+			<form
+				action="/login.html"
+				method="post"
+				class="border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-4"
+			>
+				<div class="text-white text-center text-3xl">Login</div>
+				<input type="text" name="username" placeholder="Username"/>
+				<input type="password" name="password" placeholder="Password"/>
+				<input type="submit" value="Login" class="border rounded-sm text-white"/>
+				<a href="./register" class="text-white">Register</a>
+			</form>
+		</div>
+	}
+}
+
+templ ShowRegister() {
+	@layout.Base() {
+    	<div class="text-white h-screen flex justify-center items-center">
+	    	@RegisterForm("", "", "")
+        </div>
+	}
+}

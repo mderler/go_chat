@@ -12,6 +12,10 @@ build:
 air:
 	@go run github.com/cosmtrek/air@latest
 
+.PHONY: templ-fmt
+templ-fmt:
+	@go run github.com/a-h/templ/cmd/templ@latest fmt view
+
 .PHONY: create-migration
 create-migration:
 	go run github.com/pressly/goose/v3/cmd/goose@latest -dir ./migrations create $(name) sql

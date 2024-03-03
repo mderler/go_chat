@@ -14,8 +14,9 @@ templ Base() {
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>Chat</title>
 			<link href="/style.css" rel="stylesheet"/>
+			<script src="/htmx.min.js"></script>
 		</head>
-		<body onload={ darkmode() }>
+		<body onload={ darkmode() } class="bg-slate-900">
 			{ children... }
 		</body>
 	</html>

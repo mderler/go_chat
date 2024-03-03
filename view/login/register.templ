@@ -1,0 +1,42 @@
+package login
+
+templ label(forElement string, text string, textError string) {
+    <label for={ forElement } class="flex">
+        <div>{ text }:</div>
+        if textError != "" {
+            <div class="text-red-700 text-sm ml-2">
+                { textError }
+            </div>
+        }
+    </label>
+}
+
+templ RegisterForm(usernameError string, passwordError string, passwordConfirmError string) {
+    <form
+        hx-post="/register"
+        hx-swap="outerHTML"
+        class="border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-2"
+    >
+        <div class="text-center text-3xl">Register</div>
+        <div class="flex flex-col">
+            @label("username-input", "Username", usernameError)
+            <input id="username-input" type="text" name="username" placeholder="Username" autocomplete="username"/>
+        </div>
+        <div class="flex flex-col">
+            @label("password-input", "Password", passwordError)
+            <input id="password-input" type="password" name="password" placeholder="Password" autocomplete="current-password"/>
+        </div>
+        <div class="flex flex-col">
+            @label("password-confirm-input", "Confirm Password", passwordConfirmError)
+            <input
+                id="password-confirm-input"
+                type="password"
+                name="password-confirm"
+                placeholder="Confirm Password"
+                autocomplete="current-password"
+            />
+        </div>
+        <input type="submit" value="Register" class="border rounded-sm"/>
+        <a href="/login">Login</a>
+    </form>
+}
