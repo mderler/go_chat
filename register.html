@@ -9,20 +9,34 @@
   <body class="bg-slate-900">
     <div class="text-white h-screen flex justify-center items-center">
       <form
-        action="/login.html"
+        action="/register"
         method="post"
-        class="border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-4"
+        class="border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-2"
       >
         <div class="text-center text-3xl">Register</div>
-        <input type="text" name="username" placeholder="Username" />
-        <input type="password" name="password" placeholder="Password" />
-        <input
-          type="password"
-          name="password-confirm"
-          placeholder="Confirm Password"
-        />
+        <div class="flex flex-col">
+          <label for="username" class="flex">
+            <div>Username:</div>
+            <div class="text-red-700 text-sm ml-2">
+              Too long, max. 50 characters allowed
+            </div>
+          </label>
+          <input type="text" name="username" placeholder="Username" />
+        </div>
+        <div class="flex flex-col">
+          <label for="password">Password:</label>
+          <input type="password" name="password" placeholder="Password" />
+        </div>
+        <div class="flex flex-col">
+          <label for="password-confirm">Confirm Password:</label>
+          <input
+            type="password"
+            name="password-confirm"
+            placeholder="Confirm Password"
+          />
+        </div>
         <input type="submit" value="Register" class="border rounded-sm" />
-        <a href="./login.html">Login</a>
+        <a href="./login">Login</a>
       </form>
     </div>
   </body>
