@@ -8,11 +8,22 @@ import (
 	gochat "github.com/mderler/go_chat"
 	"github.com/mderler/go_chat/handler"
 	"github.com/mderler/go_chat/model"
+	"github.com/pressly/goose/v3"
 )
 
 func main() {
 	db, err := sql.Open("sqlite3", "chat.db")
 	if err != nil {
+		panic(err)
+	}
+
+	goose.SetBaseFS(gochat.EmbedMigrations)
+
+	if err := goose.SetDialect("sqlite3"); err != nil {
+		panic(err)
+	}
+
+	if err := goose.Up(db, "migrations"); err != nil {
 		panic(err)
 	}
 
