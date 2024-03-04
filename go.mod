@@ -3,7 +3,7 @@ module github.com/mderler/go_chat
 go 1.22.0
 
 require (
-	github.com/a-h/templ v0.2.543
+	github.com/a-h/templ v0.2.598
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/mattn/go-sqlite3 v1.14.22

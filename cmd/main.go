@@ -38,6 +38,7 @@ func main() {
 
 	loginHandler := handler.NewLoginHandler(queries)
 	e.GET("/login", loginHandler.ShowLogin)
+	e.POST("/login", loginHandler.Login)
 	e.GET("/register", loginHandler.ShowRegister)
 	e.POST("/register", loginHandler.Register)
 

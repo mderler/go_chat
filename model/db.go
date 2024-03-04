@@ -27,6 +27,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
 	}
+	if q.getPasswordByUsernameStmt, err = db.PrepareContext(ctx, getPasswordByUsername); err != nil {
+		return nil, fmt.Errorf("error preparing query GetPasswordByUsername: %w", err)
+	}
 	if q.listUserStmt, err = db.PrepareContext(ctx, listUser); err != nil {
 		return nil, fmt.Errorf("error preparing query ListUser: %w", err)
 	}
@@ -38,6 +41,11 @@ func (q *Queries) Close() error {
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
+	if q.getPasswordByUsernameStmt != nil {
+		if cerr := q.getPasswordByUsernameStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getPasswordByUsernameStmt: %w", cerr)
 		}
 	}
 	if q.listUserStmt != nil {
@@ -82,17 +90,19 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db             DBTX
-	tx             *sql.Tx
-	createUserStmt *sql.Stmt
-	listUserStmt   *sql.Stmt
+	db                        DBTX
+	tx                        *sql.Tx
+	createUserStmt            *sql.Stmt
+	getPasswordByUsernameStmt *sql.Stmt
+	listUserStmt              *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:             tx,
-		tx:             tx,
-		createUserStmt: q.createUserStmt,
-		listUserStmt:   q.listUserStmt,
+		db:                        tx,
+		tx:                        tx,
+		createUserStmt:            q.createUserStmt,
+		getPasswordByUsernameStmt: q.getPasswordByUsernameStmt,
+		listUserStmt:              q.listUserStmt,
 	}
 }

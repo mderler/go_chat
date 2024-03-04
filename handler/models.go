@@ -8,5 +8,10 @@ var validate = validator.New(validator.WithRequiredStructEnabled())
 
 type UserRequest struct {
 	Username string `validate:"required,min=1,max=50"`
-	Password string `validate:"required,min=1,max=255"`
+	Password string `validate:"required,min=8,max=255"`
 }
+
+const (
+	internalServerError string = "Internal Server Error"
+	incorrectPassword   string = "Incorrect Username or Password"
+)

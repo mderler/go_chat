@@ -9,13 +9,12 @@ import (
 	"context"
 )
 
-const createUser = `-- name: CreateUser :one
+const createUser = `-- name: CreateUser :execrows
 INSERT INTO user (
   username, password
 ) VALUES (
   ?, ?
 )
-RETURNING id, username
 `
 
 type CreateUserParams struct {
@@ -23,16 +22,24 @@ type CreateUserParams struct {
 	Password string
 }
 
-type CreateUserRow struct {
-	ID       int64
-	Username string
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
+	result, err := q.exec(ctx, q.createUserStmt, createUser, arg.Username, arg.Password)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
-	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Username, arg.Password)
-	var i CreateUserRow
-	err := row.Scan(&i.ID, &i.Username)
-	return i, err
+const getPasswordByUsername = `-- name: GetPasswordByUsername :one
+SELECT password FROM user
+WHERE username = ?
+`
+
+func (q *Queries) GetPasswordByUsername(ctx context.Context, username string) (string, error) {
+	row := q.queryRow(ctx, q.getPasswordByUsernameStmt, getPasswordByUsername, username)
+	var password string
+	err := row.Scan(&password)
+	return password, err
 }
 
 const listUser = `-- name: ListUser :many
