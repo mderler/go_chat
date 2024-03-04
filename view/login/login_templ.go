@@ -23,7 +23,31 @@ func LoginForm(username string, passwordError string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/login\" hx-swap=\"outerHTML\" class=\"border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-4\"><div class=\"text-white text-center text-3xl\">Login</div><div class=\"flex flex-col\"><label for=\"username\" class=\"text-gray-400\">Username:</label> <input id=\"username\" type=\"text\" name=\"username\" placeholder=\"Username\"></div><div class=\"flex flex-col\"><label for=\"password\" class=\"text-gray-400\">Password:</label> <input id=\"password\" type=\"password\" name=\"password\" placeholder=\"Password\"></div><input type=\"submit\" value=\"Login\" class=\"border rounded-sm text-white\"> <a href=\"/register\" class=\"text-white\">Register</a></form>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/login\" hx-swap=\"outerHTML\" class=\"border rounded-xl px-4 py-4 bg-slate-950 flex flex-col gap-y-4\"><div class=\"text-white text-center text-3xl\">Login</div><div class=\"flex flex-col\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = label("username-input", "Username", passwordError).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input id=\"username\" type=\"text\" name=\"username\" value=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(username))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" placeholder=\"Username\"></div><div class=\"flex flex-col\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = label("password-input", "Password", passwordError).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<input id=\"password\" type=\"password\" name=\"password\" placeholder=\"Password\"></div><input type=\"submit\" value=\"Login\" class=\"border rounded-sm text-white\"> <a href=\"/register\" class=\"text-blue-200\">Register &#8594;</a></form>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

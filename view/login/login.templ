@@ -8,14 +8,14 @@ templ LoginForm(username string, passwordError string) {
 	>
 		<div class="text-white text-center text-3xl">Login</div>
 		<div class="flex flex-col">
-			<label for="username" class="text-gray-400">Username:</label>
-			<input id="username" type="text" name="username" placeholder="Username"/>
+			@label("username-input", "Username", passwordError)
+			<input id="username" type="text" name="username" value={ username } placeholder="Username"/>
 		</div>
 		<div class="flex flex-col">
-			<label for="password" class="text-gray-400">Password:</label>
+			@label("password-input", "Password", passwordError)
 			<input id="password" type="password" name="password" placeholder="Password"/>
 		</div>
 		<input type="submit" value="Login" class="border rounded-sm text-white"/>
-		<a href="/register" class="text-white">Register</a>
+		<a href="/register" class="text-blue-200">Register &#8594;</a>
 	</form>
 }

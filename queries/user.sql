@@ -9,6 +9,6 @@ INSERT INTO user (
 SELECT id, username FROM user
 ORDER BY name;
 
--- name: GetIdAndPasswordByUsername :one
-SELECT id, password FROM user
+-- name: GetPasswordByUsername :one
+SELECT password FROM user
 WHERE username = ?;

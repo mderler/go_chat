@@ -30,7 +30,7 @@ func main() {
 	queries := model.New(db)
 
 	e := echo.New()
-
+	e.Use(middleware.Recover())
 	e.Use(middleware.Logger())
 
 	e.GET("/style.css", func(c echo.Context) error {
@@ -42,15 +42,22 @@ func main() {
 	})
 
 	indexHandler := handler.IndexHandler{}
-	e.GET("/", indexHandler.ShowIndex)
+
+	authGroup := e.Group("")
+	authGroup.Use(handler.CookieAuth)
+	authGroup.GET("/", indexHandler.ShowIndex)
 
 	userHandler := handler.UserHandler{}
 	e.GET("/user", userHandler.ShowUser)
 
 	loginHandler := handler.NewLoginHandler(queries)
-	e.GET("/login", loginHandler.ShowLogin)
+
+	redirectGroup := e.Group("")
+	redirectGroup.Use(handler.RedirectIfAuthenticated)
+	redirectGroup.GET("/login", loginHandler.ShowLogin)
+	redirectGroup.GET("/register", loginHandler.ShowRegister)
 	e.POST("/login", loginHandler.Login)
-	e.GET("/register", loginHandler.ShowRegister)
+	e.POST("/logout", loginHandler.Logout)
 	e.POST("/register", loginHandler.Register)
 
 	e.Logger.Fatal(e.Start(":8000"))

@@ -14,29 +14,36 @@ templ Show(messages []Message) {
 			onload="{ main() }"
 			class="base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white"
 		>
-			<div class="border-r ml-2 flex items-center justify-around gap-2">
-				<div class="text-xl">Matthias Derler</div>
-				<div>
-					<label for="darkMode">Dark Mode:</label>
-					<input id="darkMode" type="checkbox" onchange="onDarkModeChange"/>
+			<div class="border-r flex flex-row gap-2 items-center">
+				<div class="text-xl ml-2 flex items-center">
+					<div class="ml-2 flex items-center">
+						<span
+							class="h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center"
+						>
+							MD
+						</span>
+						<span>Matthias Derler</span>
+					</div>
+					<button hx-post="/logout">&#x1F6AA;</button>
 				</div>
+				<button class="ml-auto mr-2">&#x270F;</button>
 			</div>
 			<div class="ml-2 text-2xl flex items-center">
-				<div
+				<span
 					class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
 				>
 					SD
-				</div>
+				</span>
 				<span>Stefan Derler</span>
 			</div>
 			<section class="dark:bg-slate-600 w-80 border-r">
 				<ul class="flex flex-col gap-2 mx-2 mt-2">
 					<div class="border border-black rounded-md flex px-1 py-1">
-						<div
+						<span
 							class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
 						>
 							SD
-						</div>
+						</span>
 						<span>Stefan Derler</span>
 					</div>
 				</ul>

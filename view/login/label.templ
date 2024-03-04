@@ -1,0 +1,12 @@
+package login
+
+templ label(forElement string, text string, textError string) {
+	<label for={ forElement } class="flex">
+		<div class="text-gray-400">{ text }:</div>
+		if textError != "" {
+			<div class="text-red-700 text-sm ml-2">
+				{ textError }
+			</div>
+		}
+	</label>
+}
