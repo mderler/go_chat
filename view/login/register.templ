@@ -1,6 +1,6 @@
 package login
 
-templ RegisterForm(username string, usernameError string, passwordError string, passwordConfirmError string) {
+templ RegisterForm(username string, fullName string, usernameError string, fullNameError string, passwordError string, passwordConfirmError string) {
 	<form
 		hx-post="/register"
 		hx-swap="outerHTML"
@@ -10,6 +10,10 @@ templ RegisterForm(username string, usernameError string, passwordError string, 
 		<div class="flex flex-col">
 			@label("username-input", "Username", usernameError)
 			<input id="username-input" type="text" name="username" value={ username } placeholder="Username" autocomplete="username"/>
+		</div>
+		<div class="flex flex-col">
+			@label("full-name-input", "Full Name", fullNameError)
+			<input id="full-name-input" type="text" name="full-name" value={ fullName } placeholder="Full Name" autocomplete="full-name"/>
 		</div>
 		<div class="flex flex-col">
 			@label("password-input", "Password", passwordError)

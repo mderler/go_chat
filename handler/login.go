@@ -34,10 +34,12 @@ func (h *LoginHandler) ShowRegister(c echo.Context) error {
 func (h *LoginHandler) Register(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
+	fullName := c.FormValue("password")
 
 	user := UserRequest{
 		Username: username,
 		Password: password,
+		FullName: fullName,
 	}
 
 	var passwordConfirmError string
@@ -48,19 +50,21 @@ func (h *LoginHandler) Register(c echo.Context) error {
 
 	err := validate.Struct(user)
 	if err != nil {
-		var usernameError, passwordError string
+		var usernameError, fullNameError, passwordError string
 		for _, err := range err.(validator.ValidationErrors) {
 			switch err.Field() {
 			case "Username":
 				usernameError = fmt.Sprintf("%s %s", "Username", getErrorMessage(err))
+			case "FullName":
+				fullNameError = fmt.Sprintf("%s %s", "Full Name", getErrorMessage(err))
 			case "Password":
 				passwordError = fmt.Sprintf("%s %s", "Password", getErrorMessage(err))
 			}
 		}
-		return render(c, login.RegisterForm(username, usernameError, passwordError, passwordConfirmError))
+		return render(c, login.RegisterForm(username, fullName, usernameError, fullNameError, passwordError, passwordConfirmError))
 	}
 	if passwordConfirmError != "" {
-		return render(c, login.RegisterForm(username, "", "", passwordConfirmError))
+		return render(c, login.RegisterForm(username, fullName, "", "", "", passwordConfirmError))
 	}
 
 	rows, err := h.queries.CreateUser(c.Request().Context(), model.CreateUserParams(user))

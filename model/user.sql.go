@@ -11,19 +11,20 @@ import (
 
 const createUser = `-- name: CreateUser :execrows
 INSERT INTO user (
-  username, password
+  username, full_name, password
 ) VALUES (
-  ?, ?
+  ?, ?, ?
 )
 `
 
 type CreateUserParams struct {
 	Username string
+	FullName string
 	Password string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
-	result, err := q.exec(ctx, q.createUserStmt, createUser, arg.Username, arg.Password)
+	result, err := q.exec(ctx, q.createUserStmt, createUser, arg.Username, arg.FullName, arg.Password)
 	if err != nil {
 		return 0, err
 	}
@@ -43,13 +44,14 @@ func (q *Queries) GetPasswordByUsername(ctx context.Context, username string) (s
 }
 
 const listUser = `-- name: ListUser :many
-SELECT id, username FROM user
+SELECT id, username, full_name FROM user
 ORDER BY name
 `
 
 type ListUserRow struct {
 	ID       int64
 	Username string
+	FullName string
 }
 
 func (q *Queries) ListUser(ctx context.Context) ([]ListUserRow, error) {
@@ -61,7 +63,7 @@ func (q *Queries) ListUser(ctx context.Context) ([]ListUserRow, error) {
 	items := []ListUserRow{}
 	for rows.Next() {
 		var i ListUserRow
-		if err := rows.Scan(&i.ID, &i.Username); err != nil {
+		if err := rows.Scan(&i.ID, &i.Username, &i.FullName); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
