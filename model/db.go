@@ -27,8 +27,11 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
 	}
-	if q.getPasswordByUsernameStmt, err = db.PrepareContext(ctx, getPasswordByUsername); err != nil {
-		return nil, fmt.Errorf("error preparing query GetPasswordByUsername: %w", err)
+	if q.getFullNameByIdStmt, err = db.PrepareContext(ctx, getFullNameById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetFullNameById: %w", err)
+	}
+	if q.getUserForLoginStmt, err = db.PrepareContext(ctx, getUserForLogin); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserForLogin: %w", err)
 	}
 	if q.listUserStmt, err = db.PrepareContext(ctx, listUser); err != nil {
 		return nil, fmt.Errorf("error preparing query ListUser: %w", err)
@@ -43,9 +46,14 @@ func (q *Queries) Close() error {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
 		}
 	}
-	if q.getPasswordByUsernameStmt != nil {
-		if cerr := q.getPasswordByUsernameStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getPasswordByUsernameStmt: %w", cerr)
+	if q.getFullNameByIdStmt != nil {
+		if cerr := q.getFullNameByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getFullNameByIdStmt: %w", cerr)
+		}
+	}
+	if q.getUserForLoginStmt != nil {
+		if cerr := q.getUserForLoginStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserForLoginStmt: %w", cerr)
 		}
 	}
 	if q.listUserStmt != nil {
@@ -90,19 +98,21 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                        DBTX
-	tx                        *sql.Tx
-	createUserStmt            *sql.Stmt
-	getPasswordByUsernameStmt *sql.Stmt
-	listUserStmt              *sql.Stmt
+	db                  DBTX
+	tx                  *sql.Tx
+	createUserStmt      *sql.Stmt
+	getFullNameByIdStmt *sql.Stmt
+	getUserForLoginStmt *sql.Stmt
+	listUserStmt        *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                        tx,
-		tx:                        tx,
-		createUserStmt:            q.createUserStmt,
-		getPasswordByUsernameStmt: q.getPasswordByUsernameStmt,
-		listUserStmt:              q.listUserStmt,
+		db:                  tx,
+		tx:                  tx,
+		createUserStmt:      q.createUserStmt,
+		getFullNameByIdStmt: q.getFullNameByIdStmt,
+		getUserForLoginStmt: q.getUserForLoginStmt,
+		listUserStmt:        q.listUserStmt,
 	}
 }

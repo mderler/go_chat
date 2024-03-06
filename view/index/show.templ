@@ -8,7 +8,7 @@ type Message struct {
 	Left    bool
 }
 
-templ Show(messages []Message) {
+templ Show(fullName string, messages []Message) {
 	@layout.Base() {
 		<div
 			onload="{ main() }"
@@ -22,7 +22,7 @@ templ Show(messages []Message) {
 						>
 							MD
 						</span>
-						<span>Matthias Derler</span>
+						<span>{ fullName }</span>
 					</div>
 					<button hx-post="/logout">&#x1F6AA;</button>
 				</div>

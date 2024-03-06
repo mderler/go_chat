@@ -18,7 +18,7 @@ type Message struct {
 	Left    bool
 }
 
-func Show(messages []Message) templ.Component {
+func Show(fullName string, messages []Message) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -37,7 +37,20 @@ func Show(messages []Message) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div onload=\"{ main() }\" class=\"base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white\"><div class=\"border-r flex flex-row gap-2 items-center\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center\">MD</span> <span>Matthias Derler</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button class=\"ml-auto mr-2\">&#x270F;</button></div><div class=\"ml-2 text-2xl flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div><section class=\"dark:bg-slate-600 w-80 border-r\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section><section class=\"dark:bg-slate-600 chat-grid h-full border-inherit\"><div class=\"border-inherit flex flex-col overflow-y-auto\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div onload=\"{ main() }\" class=\"base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white\"><div class=\"border-r flex flex-row gap-2 items-center\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center\">MD</span> <span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fullName)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 24, Col: 22}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button class=\"ml-auto mr-2\">&#x270F;</button></div><div class=\"ml-2 text-2xl flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div><section class=\"dark:bg-slate-600 w-80 border-r\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section><section class=\"dark:bg-slate-600 chat-grid h-full border-inherit\"><div class=\"border-inherit flex flex-col overflow-y-auto\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -9,12 +9,12 @@ import (
 	"context"
 )
 
-const createUser = `-- name: CreateUser :execrows
+const createUser = `-- name: CreateUser :one
 INSERT INTO user (
   username, full_name, password
 ) VALUES (
   ?, ?, ?
-)
+) RETURNING id
 `
 
 type CreateUserParams struct {
@@ -24,23 +24,39 @@ type CreateUserParams struct {
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
-	result, err := q.exec(ctx, q.createUserStmt, createUser, arg.Username, arg.FullName, arg.Password)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected()
+	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Username, arg.FullName, arg.Password)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
 }
 
-const getPasswordByUsername = `-- name: GetPasswordByUsername :one
-SELECT password FROM user
+const getFullNameById = `-- name: GetFullNameById :one
+SELECT full_name FROM user
+WHERE id = ?
+`
+
+func (q *Queries) GetFullNameById(ctx context.Context, id int64) (string, error) {
+	row := q.queryRow(ctx, q.getFullNameByIdStmt, getFullNameById, id)
+	var full_name string
+	err := row.Scan(&full_name)
+	return full_name, err
+}
+
+const getUserForLogin = `-- name: GetUserForLogin :one
+SELECT id, password FROM user
 WHERE username = ?
 `
 
-func (q *Queries) GetPasswordByUsername(ctx context.Context, username string) (string, error) {
-	row := q.queryRow(ctx, q.getPasswordByUsernameStmt, getPasswordByUsername, username)
-	var password string
-	err := row.Scan(&password)
-	return password, err
+type GetUserForLoginRow struct {
+	ID       int64
+	Password string
+}
+
+func (q *Queries) GetUserForLogin(ctx context.Context, username string) (GetUserForLoginRow, error) {
+	row := q.queryRow(ctx, q.getUserForLoginStmt, getUserForLogin, username)
+	var i GetUserForLoginRow
+	err := row.Scan(&i.ID, &i.Password)
+	return i, err
 }
 
 const listUser = `-- name: ListUser :many

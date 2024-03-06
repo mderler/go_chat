@@ -67,12 +67,12 @@ func (h *LoginHandler) Register(c echo.Context) error {
 		return render(c, login.RegisterForm(username, fullName, "", "", "", passwordConfirmError))
 	}
 
-	rows, err := h.queries.CreateUser(c.Request().Context(), model.CreateUserParams(user))
-	if err != nil || rows != 1 {
+	userID, err := h.queries.CreateUser(c.Request().Context(), model.CreateUserParams(user))
+	if err != nil {
 		return render(c, layout.ErrorBase(internalServerError))
 	}
 
-	cookie, err := generateJWTCookie()
+	cookie, err := generateJWTCookie(userID)
 	if err != nil {
 		return render(c, layout.ErrorBase(internalServerError))
 	}
@@ -86,7 +86,7 @@ func (h *LoginHandler) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
-	dbPassword, err := h.queries.GetPasswordByUsername(c.Request().Context(), username)
+	user, err := h.queries.GetUserForLogin(c.Request().Context(), username)
 	if err != nil {
 		log.Println(err)
 		if err == sql.ErrNoRows {
@@ -95,11 +95,11 @@ func (h *LoginHandler) Login(c echo.Context) error {
 		return render(c, layout.ErrorBase(internalServerError))
 	}
 
-	if dbPassword != password {
+	if user.Password != password {
 		return render(c, login.LoginForm(username, incorrectPassword))
 	}
 
-	cookie, err := generateJWTCookie()
+	cookie, err := generateJWTCookie(user.ID)
 	if err != nil {
 		return render(c, layout.ErrorBase(internalServerError))
 	}

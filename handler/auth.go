@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -8,11 +9,13 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func generateJWTCookie() (*http.Cookie, error) {
+func generateJWTCookie(id int64) (*http.Cookie, error) {
 	// TODO: Move to env file
 	secretKey := []byte("my_secret_key")
 
 	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["id"] = id
 
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
@@ -41,6 +44,13 @@ func CookieAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			c.Response().Header().Set("HX-Redirect", "/login")
 			c.Response().Header().Set("Cache-Control", "no-store")
 			return c.Redirect(http.StatusMovedPermanently, "/login")
+		}
+
+		userID, ok := token.Claims.(jwt.MapClaims)["id"].(int64)
+		if !ok {
+			log.Println("Error getting userID from token")
+		} else {
+			c.Set("userID", userID)
 		}
 
 		return next(c)
