@@ -34,7 +34,7 @@ func (h *LoginHandler) ShowRegister(c echo.Context) error {
 func (h *LoginHandler) Register(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-	fullName := c.FormValue("password")
+	fullName := c.FormValue("full-name")
 
 	user := UserRequest{
 		Username: username,
