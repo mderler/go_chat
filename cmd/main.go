@@ -29,17 +29,13 @@ func main() {
 
 	queries := model.New(db)
 
+	assetsFs := echo.MustSubFS(gochat.Public, "public")
+
 	e := echo.New()
 	e.Use(middleware.Recover())
-	// e.Use(middleware.Logger())
+	e.Use(middleware.Logger())
 
-	e.GET("/style.css", func(c echo.Context) error {
-		return c.String(200, gochat.Styles)
-	})
-
-	e.GET("/htmx.min.js", func(c echo.Context) error {
-		return c.String(200, gochat.HTMX)
-	})
+	e.StaticFS("/public", assetsFs)
 
 	indexHandler := handler.NewIndexHandler(queries)
 

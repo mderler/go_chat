@@ -26,7 +26,7 @@ templ Show(fullName string, messages []Message) {
 					</div>
 					<button hx-post="/logout">&#x1F6AA;</button>
 				</div>
-				<button class="ml-auto mr-2">&#x270F;</button>
+				<button id="new-chat-button" class="ml-auto mr-2">&#x270F;</button>
 			</div>
 			<div class="ml-2 text-2xl flex items-center">
 				<span
@@ -64,6 +64,23 @@ templ Show(fullName string, messages []Message) {
 				</div>
 			</section>
 		</div>
+		<dialog id="new-chat-dialog" class="border-2 border-black rounded-xl px-4 py-4">
+			<form method="dialog">
+				<h1>Find Contact</h1>
+				<div>
+					<label for="chat-name">Chat name</label>
+					<input id="chat-name" type="text" />
+				</div>
+				<div>
+					<label for="chat-participants">Participants</label>
+					<input id="chat-participants" type="text" />
+				</div>
+				<div>
+					<button type="submit">Create</button>
+					<button type="cancel">Cancel</button>
+				</div>
+			</form>
+		</dialog>
 		<script>
 			document.querySelector('.chat-input')
 				.addEventListener('keydown', (event) => {
@@ -72,6 +89,13 @@ templ Show(fullName string, messages []Message) {
 						console.log('Send message:', chatInput.value)
 						chatInput.value = ''
 					}
+				})
+			
+			const dialog = document.getElementById('new-chat-dialog')
+
+			document.getElementById('new-chat-button')
+				.addEventListener('click', () => {
+					dialog.showModal()
 				})
 		</script>
 	}

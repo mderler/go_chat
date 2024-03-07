@@ -69,11 +69,13 @@ func (h *LoginHandler) Register(c echo.Context) error {
 
 	userID, err := h.queries.CreateUser(c.Request().Context(), model.CreateUserParams(user))
 	if err != nil {
+		log.Println(err)
 		return render(c, layout.ErrorBase(internalServerError))
 	}
 
 	cookie, err := generateJWTCookie(userID)
 	if err != nil {
+		log.Println(err)
 		return render(c, layout.ErrorBase(internalServerError))
 	}
 
