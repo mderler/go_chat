@@ -7,6 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"github.com/mderler/go_chat/view/layout"
 )
 
 func generateJWTCookie(id int64) (*http.Cookie, error) {
@@ -46,12 +47,13 @@ func CookieAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.Redirect(http.StatusMovedPermanently, "/login")
 		}
 
-		userID, ok := token.Claims.(jwt.MapClaims)["id"].(int64)
+		userID, ok := token.Claims.(jwt.MapClaims)["id"].(float64)
 		if !ok {
 			log.Println("Error getting userID from token")
-		} else {
-			c.Set("userID", userID)
+			return render(c, layout.ErrorBase(internalServerError))
 		}
+
+		c.Set("userID", int64(userID))
 
 		return next(c)
 	}
