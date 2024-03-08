@@ -37,14 +37,14 @@ func Show(fullName string, messages []Message) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div onload=\"{ main() }\" class=\"base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white\"><div class=\"border-r flex flex-row gap-2 items-center\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center\">MD</span> <span>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white\"><div class=\"border-r flex flex-row gap-2 items-center\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center\">MD</span> <span>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fullName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 24, Col: 22}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 23, Col: 22}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -60,7 +60,7 @@ func Show(fullName string, messages []Message) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div></section></div><dialog id=\"new-chat-dialog\" class=\"border-2 border-black rounded-xl px-4 py-4\"><form method=\"dialog\"><h1>Find Contact</h1><div><label for=\"chat-name\">Chat name</label> <input id=\"chat-name\" type=\"text\"></div><div><label for=\"chat-participants\">Participants</label> <input id=\"chat-participants\" type=\"text\"></div><div><button type=\"submit\">Create</button> <button type=\"cancel\">Cancel</button></div></form></dialog><script>\n\t\t\tdocument.querySelector('.chat-input')\n\t\t\t\t.addEventListener('keydown', (event) => {\n\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\tevent.preventDefault()\n\t\t\t\t\t\tconsole.log('Send message:', chatInput.value)\n\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div></section></div><dialog id=\"new-chat-dialog\" class=\"text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]\"><form method=\"dialog\"><div class=\"flex flex-row justify-between pb-2 mb-2\"><h1 class=\"text-4xl\">Find Contacts</h1><button type=\"cancel\" class=\"text-2xl text-red-500\">&times;</button></div><div class=\"border border-black p-2 rounded-md bg-slate-950\"><input type=\"text\" class=\"w-full bg-slate-950 text-white border-b border-slate-300 outline-none\" placeholder=\"Search...\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\"></div><div id=\"search-results\" class=\"min-h-64 border border-black rounded-md mt-2\"></div></form></dialog><script>\n\t\t\tdocument.querySelector('.chat-input')\n\t\t\t\t.addEventListener('keydown', (event) => {\n\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\tevent.preventDefault()\n\t\t\t\t\t\tconsole.log('Send message:', chatInput.value)\n\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
