@@ -1,9 +1,12 @@
 package user;
 
 import "github.com/mderler/go_chat/view/layout"
+import "github.com/mderler/go_chat/model"
 
-templ Show() {
+templ ShowUserList(users []model.GetUsersByQueryRow) {
 	@layout.Base() {
-		<h1>Hello Test</h1>
+		for _, user := range users {
+			@UserListItem(user)
+		}
 	}
 }

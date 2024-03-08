@@ -33,6 +33,9 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.getUserForLoginStmt, err = db.PrepareContext(ctx, getUserForLogin); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserForLogin: %w", err)
 	}
+	if q.getUsersByQueryStmt, err = db.PrepareContext(ctx, getUsersByQuery); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUsersByQuery: %w", err)
+	}
 	if q.listUserStmt, err = db.PrepareContext(ctx, listUser); err != nil {
 		return nil, fmt.Errorf("error preparing query ListUser: %w", err)
 	}
@@ -54,6 +57,11 @@ func (q *Queries) Close() error {
 	if q.getUserForLoginStmt != nil {
 		if cerr := q.getUserForLoginStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing getUserForLoginStmt: %w", cerr)
+		}
+	}
+	if q.getUsersByQueryStmt != nil {
+		if cerr := q.getUsersByQueryStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUsersByQueryStmt: %w", cerr)
 		}
 	}
 	if q.listUserStmt != nil {
@@ -103,6 +111,7 @@ type Queries struct {
 	createUserStmt      *sql.Stmt
 	getFullNameByIdStmt *sql.Stmt
 	getUserForLoginStmt *sql.Stmt
+	getUsersByQueryStmt *sql.Stmt
 	listUserStmt        *sql.Stmt
 }
 
@@ -113,6 +122,7 @@ func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 		createUserStmt:      q.createUserStmt,
 		getFullNameByIdStmt: q.getFullNameByIdStmt,
 		getUserForLoginStmt: q.getUserForLoginStmt,
+		getUsersByQueryStmt: q.getUsersByQueryStmt,
 		listUserStmt:        q.listUserStmt,
 	}
 }

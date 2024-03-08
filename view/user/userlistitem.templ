@@ -1,0 +1,14 @@
+package user
+
+import "github.com/mderler/go_chat/model"
+import "fmt"
+
+templ UserListItem(userListItemData model.GetUsersByQueryRow) {
+	<div
+		id={ fmt.Sprintf("user-%d", userListItemData.ID) }
+		class="h-10 border border-teal-400 hover:border-orange-600 rounded-md flex flex-row items-center cursor-pointer overscroll-y-auto"
+	>
+		<span class="font-bold text-xl pl-2 mr-4">{ userListItemData.FullName }</span>
+		<span class="text-sm italic text-gray-600">{ userListItemData.Username }</span>
+	</div>
+}

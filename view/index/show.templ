@@ -66,19 +66,21 @@ templ Show(fullName string, messages []Message) {
 		<dialog id="new-chat-dialog" class="text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]">
 			<form method="dialog">
 				<div class="flex flex-row justify-between pb-2 mb-2">
-					<h1 class="text-4xl">Find Contacts</h1>
+					<h1 class="text-4xl">New Chat</h1>
 					<button type="cancel" class="text-2xl text-red-500">&times;</button>
 				</div>
 				<div class="border border-black p-2 rounded-md bg-slate-950">
 					<input
+						name="q"
 						type="text"
 						class="w-full bg-slate-950 text-white border-b border-slate-300 outline-none"
 						placeholder="Search..."
+						hx-get="/user"
 						hx-trigger="keyup changed delay:500ms"
 						hx-target="#search-results"
 					/>
 				</div>
-				<div id="search-results" class="min-h-64 border border-black rounded-md mt-2"></div>
+				<div id="search-results" class="min-h-64 border border-black rounded-md mt-2 p-2"></div>
 			</form>
 		</dialog>
 		<script>

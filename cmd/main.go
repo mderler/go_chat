@@ -33,7 +33,6 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Recover())
-	e.Use(middleware.Logger())
 
 	e.StaticFS("/public", assetsFs)
 
@@ -43,8 +42,8 @@ func main() {
 	authGroup.Use(handler.CookieAuth)
 	authGroup.GET("/", indexHandler.ShowIndex)
 
-	userHandler := handler.UserHandler{}
-	e.GET("/user", userHandler.ShowUser)
+	userHandler := handler.NewUserHandler(queries)
+	e.GET("/user", userHandler.ShowUserList)
 
 	loginHandler := handler.NewLoginHandler(queries)
 

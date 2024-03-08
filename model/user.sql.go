@@ -59,6 +59,40 @@ func (q *Queries) GetUserForLogin(ctx context.Context, username string) (GetUser
 	return i, err
 }
 
+const getUsersByQuery = `-- name: GetUsersByQuery :many
+SELECT id, username, full_name FROM user
+WHERE username LIKE ?1 OR full_name LIKE ?1
+`
+
+type GetUsersByQueryRow struct {
+	ID       int64
+	Username string
+	FullName string
+}
+
+func (q *Queries) GetUsersByQuery(ctx context.Context, name string) ([]GetUsersByQueryRow, error) {
+	rows, err := q.query(ctx, q.getUsersByQueryStmt, getUsersByQuery, name)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetUsersByQueryRow{}
+	for rows.Next() {
+		var i GetUsersByQueryRow
+		if err := rows.Scan(&i.ID, &i.Username, &i.FullName); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listUser = `-- name: ListUser :many
 SELECT id, username, full_name FROM user
 ORDER BY name
