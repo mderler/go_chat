@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"log"
+	"os"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -12,6 +14,14 @@ import (
 )
 
 func main() {
+	logFile, err := os.OpenFile("app.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0666)
+	if err != nil {
+		panic(err)
+	}
+	defer logFile.Close()
+
+	log.SetOutput(logFile)
+
 	db, err := sql.Open("sqlite3", "chat.db")
 	if err != nil {
 		panic(err)
@@ -33,6 +43,7 @@ func main() {
 
 	e := echo.New()
 	e.Use(middleware.Recover())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Output: logFile}))
 
 	e.StaticFS("/public", assetsFs)
 

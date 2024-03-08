@@ -1,73 +1,72 @@
 package index
 
-import "github.com/mderler/go_chat/view/layout"
+import (
+	"strings"
+	"github.com/mderler/go_chat/view/layout"
+)
 
-type Message struct {
-	Author  string
-	Message string
-	Left    bool
+func extractFirstCharacters(name string) string {
+	words := strings.Split(name, " ")
+	wordCount := len(words)
+	if wordCount > 1 {
+		return strings.ToUpper(words[0][:1] + words[wordCount-1][:1])
+	}
+	return strings.ToUpper(name[:2])
+}
+
+templ userIcon(name string, color string) {
+	<span
+		class={"h-8 w-8 mr-2 border rounded-full text-xl text-center", bgColor(color)}
+	>
+		{ extractFirstCharacters(name) }
+	</span>
 }
 
 templ Show(fullName string, messages []Message) {
 	@layout.Base() {
 		<div
-			class="base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white"
+			class="bg-gray-100 flex h-screen text-white bg-gradient-to-b from-slate-600 to-[#240000]"
 		>
-			<div class="border-r flex flex-row gap-2 items-center">
-				<div class="text-xl ml-2 flex items-center">
-					<div class="ml-2 flex items-center">
-						<span
-							class="h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center"
-						>
-							MD
-						</span>
-						<span>{ fullName }</span>
+			<div class="flex flex-col border-r pt-2">
+				<div class="flex flex-row gap-2 items-center select-none">
+					<div class="text-xl ml-2 flex items-center">
+						<div class="ml-2 flex items-center">
+							@userIcon(fullName, "#1b95f9")
+							<span class="select-text">{ fullName }</span>
+						</div>
+						<button hx-post="/logout">&#x1F6AA;</button>
 					</div>
-					<button hx-post="/logout">&#x1F6AA;</button>
+					<button id="new-chat-button" class="ml-auto mr-2">&#x270F;</button>
 				</div>
-				<button id="new-chat-button" class="ml-auto mr-2">&#x270F;</button>
+				<section class="w-80 grow">
+					<ul class="flex flex-col gap-2 mx-2 mt-2">
+						<div class="border border-black rounded-md flex px-1 py-1">
+							<span
+								class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
+							>
+								SD
+							</span>
+							<span>Stefan Derler</span>
+						</div>
+					</ul>
+				</section>
 			</div>
-			<div class="ml-2 text-2xl flex items-center">
-				<span
-					class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
-				>
-					SD
-				</span>
-				<span>Stefan Derler</span>
-			</div>
-			<section class="dark:bg-slate-600 w-80 border-r">
-				<ul class="flex flex-col gap-2 mx-2 mt-2">
-					<div class="border border-black rounded-md flex px-1 py-1">
-						<span
-							class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
-						>
-							SD
-						</span>
-						<span>Stefan Derler</span>
+			<div class="flex flex-col grow pt-2 bg-slate-950/30 justify-center">
+				if len(messages) > 0 {
+					@ShowChat("Stefan Derler", "#f91bb3", messages)
+				} else {
+					<div class="flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8">
+						<div class="text-4xl text-gray-300 font-extrabold">Here will be your chats!</div>
+						<div class="text-xl italic text-gray-400 text-center text-pretty w-64 m-auto">Click on the "New Chat" Icon at the top left to start a conversation.</div>
 					</div>
-				</ul>
-			</section>
-			<section class="dark:bg-slate-600 chat-grid h-full border-inherit">
-				<div class="border-inherit flex flex-col overflow-y-auto">
-					for _, m := range messages {
-						@message(m.Author, m.Message, m.Left)
-					}
-				</div>
-				<div
-					class="mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle"
-				>
-					<textarea
-						class="w-full bg-slate-900 text-white chat-input outline-none"
-						placeholder="Type a message..."
-					></textarea>
-				</div>
-			</section>
+				}
+			</div>
 		</div>
-		<dialog id="new-chat-dialog" class="text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]">
+		<dialog id="new-chat-dialog" class="fixed text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]">
 			<form method="dialog">
 				<div class="flex flex-row justify-between pb-2 mb-2">
 					<h1 class="text-4xl">New Chat</h1>
-					<button type="cancel" class="text-2xl text-red-500">&times;</button>
+					<button type="cancel" class="text-4xl text-red-500 select-none">&times;</button>
 				</div>
 				<div class="border border-black p-2 rounded-md bg-slate-950">
 					<input
@@ -80,18 +79,20 @@ templ Show(fullName string, messages []Message) {
 						hx-target="#search-results"
 					/>
 				</div>
-				<div id="search-results" class="min-h-64 border border-black rounded-md mt-2 p-2"></div>
+				<div id="search-results" class="min-h-64 flex flex-col border border-black rounded-md mt-2 p-2 gap-y-2 select-none"></div>
 			</form>
 		</dialog>
 		<script>
-			document.querySelector('.chat-input')
-				.addEventListener('keydown', (event) => {
-					if (event.key === 'Enter' && !event.shiftKey) {
-						event.preventDefault()
-						console.log('Send message:', chatInput.value)
-						chatInput.value = ''
-					}
-				})
+			function addChatInputEventListener() {
+				document.querySelector('.chat-input')
+					.addEventListener('keydown', (event) => {
+						if (event.key === 'Enter' && !event.shiftKey) {
+							event.preventDefault()
+							console.log('Send message:', chatInput.value)
+							chatInput.value = ''
+						}
+					})
+			}
 			
 			const dialog = document.getElementById('new-chat-dialog')
 

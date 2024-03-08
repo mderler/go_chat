@@ -11,4 +11,5 @@ type User struct {
 	Username string
 	FullName string
 	Password string
+	Color    string
 }

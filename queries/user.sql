@@ -1,8 +1,8 @@
 -- name: CreateUser :one
 INSERT INTO user (
-  username, full_name, password
+  username, full_name, password, color
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 ) RETURNING id;
 
 -- name: ListUser :many

@@ -1,3 +1,4 @@
+*.log
 bin
 public/style.css
 *.db

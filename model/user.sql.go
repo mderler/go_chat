@@ -11,9 +11,9 @@ import (
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO user (
-  username, full_name, password
+  username, full_name, password, color
 ) VALUES (
-  ?, ?, ?
+  ?, ?, ?, ?
 ) RETURNING id
 `
 
@@ -21,10 +21,16 @@ type CreateUserParams struct {
 	Username string
 	FullName string
 	Password string
+	Color    string
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, error) {
-	row := q.queryRow(ctx, q.createUserStmt, createUser, arg.Username, arg.FullName, arg.Password)
+	row := q.queryRow(ctx, q.createUserStmt, createUser,
+		arg.Username,
+		arg.FullName,
+		arg.Password,
+		arg.Color,
+	)
 	var id int64
 	err := row.Scan(&id)
 	return id, err

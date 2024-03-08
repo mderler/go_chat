@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -20,6 +21,7 @@ func generateJWTCookie(id int64) (*http.Cookie, error) {
 
 	tokenString, err := token.SignedString(secretKey)
 	if err != nil {
+		fmt.Println(err)
 		return nil, err
 	}
 
@@ -32,6 +34,7 @@ func CookieAuth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		cookie, err := c.Cookie("auth")
 		if err != nil {
+			fmt.Println(err)
 			c.Response().Header().Set("HX-Redirect", "/login")
 			c.Response().Header().Set("Cache-Control", "no-store")
 			return c.Redirect(http.StatusMovedPermanently, "/login")
@@ -41,6 +44,7 @@ func CookieAuth(next echo.HandlerFunc) echo.HandlerFunc {
 			return []byte("my_secret_key"), nil
 		})
 		if err != nil || !token.Valid {
+			fmt.Println(err)
 			c.SetCookie(&http.Cookie{Name: "auth", Value: "", HttpOnly: true, Expires: time.Unix(0, 0)})
 			c.Response().Header().Set("HX-Redirect", "/login")
 			c.Response().Header().Set("Cache-Control", "no-store")

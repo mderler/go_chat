@@ -13,7 +13,10 @@ import (
 	"github.com/mderler/go_chat/model"
 	"github.com/mderler/go_chat/view/layout"
 	"github.com/mderler/go_chat/view/login"
+	"golang.org/x/exp/rand"
 )
+
+var userColors = []string{"#FF5733", "#33FF57", "#5733FF", "#33FFC5", "#FF5733", "#33FF57", "#5733FF", "#33FFC5"}
 
 type LoginHandler struct {
 	queries *model.Queries
@@ -67,7 +70,16 @@ func (h *LoginHandler) Register(c echo.Context) error {
 		return render(c, login.RegisterForm(username, fullName, "", "", "", passwordConfirmError))
 	}
 
-	userID, err := h.queries.CreateUser(c.Request().Context(), model.CreateUserParams(user))
+	randomIndex := rand.Intn(len(userColors))
+
+	createUserParams := model.CreateUserParams{
+		Username: user.Username,
+		Password: user.Password,
+		FullName: user.FullName,
+		Color:    userColors[randomIndex],
+	}
+
+	userID, err := h.queries.CreateUser(c.Request().Context(), createUserParams)
 	if err != nil {
 		log.Println(err)
 		return render(c, layout.ErrorBase(internalServerError))

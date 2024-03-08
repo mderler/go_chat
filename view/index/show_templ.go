@@ -10,15 +10,21 @@ import "context"
 import "io"
 import "bytes"
 
-import "github.com/mderler/go_chat/view/layout"
+import (
+	"github.com/mderler/go_chat/view/layout"
+	"strings"
+)
 
-type Message struct {
-	Author  string
-	Message string
-	Left    bool
+func extractFirstCharacters(name string) string {
+	words := strings.Split(name, " ")
+	wordCount := len(words)
+	if wordCount > 1 {
+		return strings.ToUpper(words[0][:1] + words[wordCount-1][:1])
+	}
+	return strings.ToUpper(name[:2])
 }
 
-func Show(fullName string, messages []Message) templ.Component {
+func userIcon(name string, color string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -31,36 +37,99 @@ func Show(fullName string, messages []Message) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Var2 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		var templ_7745c5c3_Var2 = []any{"h-8 w-8 mr-2 border rounded-full text-xl text-center", bgColor(color)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var2...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ.CSSClasses(templ_7745c5c3_Var2).String()))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var3 string
+		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(extractFirstCharacters(name))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 20, Col: 32}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func Show(fullName string, messages []Message) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var4 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var4 == nil {
+			templ_7745c5c3_Var4 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Var5 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 			if !templ_7745c5c3_IsBuffer {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"base-grid bg-gray-100 dark:bg-slate-900 text-black dark:text-white\"><div class=\"border-r flex flex-row gap-2 items-center\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-pink-400 text-center\">MD</span> <span>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"bg-gray-100 flex h-screen text-white bg-gradient-to-b from-slate-600 to-[#240000]\"><div class=\"flex flex-col border-r pt-2\"><div class=\"flex flex-row gap-2 items-center select-none\"><div class=\"text-xl ml-2 flex items-center\"><div class=\"ml-2 flex items-center\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fullName)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 23, Col: 22}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+			templ_7745c5c3_Err = userIcon(fullName, "#1b95f9").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button id=\"new-chat-button\" class=\"ml-auto mr-2\">&#x270F;</button></div><div class=\"ml-2 text-2xl flex items-center\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div><section class=\"dark:bg-slate-600 w-80 border-r\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section><section class=\"dark:bg-slate-600 chat-grid h-full border-inherit\"><div class=\"border-inherit flex flex-col overflow-y-auto\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<span class=\"select-text\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			for _, m := range messages {
-				templ_7745c5c3_Err = message(m.Author, m.Message, m.Left).Render(ctx, templ_7745c5c3_Buffer)
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fullName)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 34, Col: 43}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button id=\"new-chat-button\" class=\"ml-auto mr-2\">&#x270F;</button></div><section class=\"w-80 grow\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section></div><div class=\"flex flex-col grow pt-2 bg-slate-950/30 justify-center\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if len(messages) > 0 {
+				templ_7745c5c3_Err = ShowChat("Stefan Derler", "#f91bb3", messages).Render(ctx, templ_7745c5c3_Buffer)
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8\"><div class=\"text-4xl text-gray-300 font-extrabold\">Here will be your chats!</div><div class=\"text-xl italic text-gray-400 text-center text-pretty w-64 m-auto\">Click on the \"New Chat\" Icon at the top left to start a conversation.</div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div></section></div><dialog id=\"new-chat-dialog\" class=\"text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]\"><form method=\"dialog\"><div class=\"flex flex-row justify-between pb-2 mb-2\"><h1 class=\"text-4xl\">New Chat</h1><button type=\"cancel\" class=\"text-2xl text-red-500\">&times;</button></div><div class=\"border border-black p-2 rounded-md bg-slate-950\"><input name=\"q\" type=\"text\" class=\"w-full bg-slate-950 text-white border-b border-slate-300 outline-none\" placeholder=\"Search...\" hx-get=\"/user\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\"></div><div id=\"search-results\" class=\"min-h-64 border border-black rounded-md mt-2 p-2\"></div></form></dialog><script>\n\t\t\tdocument.querySelector('.chat-input')\n\t\t\t\t.addEventListener('keydown', (event) => {\n\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\tevent.preventDefault()\n\t\t\t\t\t\tconsole.log('Send message:', chatInput.value)\n\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><dialog id=\"new-chat-dialog\" class=\"fixed text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]\"><form method=\"dialog\"><div class=\"flex flex-row justify-between pb-2 mb-2\"><h1 class=\"text-4xl\">New Chat</h1><button type=\"cancel\" class=\"text-4xl text-red-500 select-none\">&times;</button></div><div class=\"border border-black p-2 rounded-md bg-slate-950\"><input name=\"q\" type=\"text\" class=\"w-full bg-slate-950 text-white border-b border-slate-300 outline-none\" placeholder=\"Search...\" hx-get=\"/user\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\"></div><div id=\"search-results\" class=\"min-h-64 flex flex-col border border-black rounded-md mt-2 p-2 gap-y-2 select-none\"></div></form></dialog><script>\n\t\t\tfunction addChatInputEventListener() {\n\t\t\t\tdocument.querySelector('.chat-input')\n\t\t\t\t\t.addEventListener('keydown', (event) => {\n\t\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\t\tevent.preventDefault()\n\t\t\t\t\t\t\tconsole.log('Send message:', chatInput.value)\n\t\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t\t}\n\t\t\t\t\t})\n\t\t\t}\n\t\t\t\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +138,7 @@ func Show(fullName string, messages []Message) templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = layout.Base().Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layout.Base().Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

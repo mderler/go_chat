@@ -2,13 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.base-grid {
-    height: 100vh;
-    display: grid;
-    grid-template-rows: 3rem 1fr;
-    grid-template-columns: auto 1fr;
-}
-
 .chat-grid {
     display: grid;
     grid-template-rows: 1fr auto;
