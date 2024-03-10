@@ -40,20 +40,19 @@ func main() {
 
 	queries := model.New(db)
 
-	assetsFs := echo.MustSubFS(gochat.Public, "public")
+	hub := chat.NewHub()
+	go hub.Run()
 
 	e := echo.New()
 	e.Use(middleware.Recover())
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{Output: logFile}))
 
+	assetsFs := echo.MustSubFS(gochat.Public, "public")
 	e.StaticFS("/public", assetsFs)
 
-	userHandler := handler.NewUserHandler(queries)
-	e.GET("/user", userHandler.ShowUserList)
+	redirectGroup := e.Group("")
 
 	loginHandler := handler.NewLoginHandler(queries)
-
-	redirectGroup := e.Group("")
 	redirectGroup.Use(handler.RedirectIfAuthenticated)
 	redirectGroup.GET("/login", loginHandler.ShowLogin)
 	redirectGroup.GET("/register", loginHandler.ShowRegister)
@@ -61,14 +60,16 @@ func main() {
 	e.POST("/logout", loginHandler.Logout)
 	e.POST("/register", loginHandler.Register)
 
-	hub := chat.NewHub()
-	go hub.Run()
+	authGroup := e.Group("")
+	authGroup.Use(handler.CookieAuth)
+
+	userHandler := handler.NewUserHandler(queries)
+	authGroup.GET("/user", userHandler.ShowUserList)
 
 	indexHandler := handler.NewIndexHandler(queries)
 
-	authGroup := e.Group("")
-	authGroup.Use(handler.CookieAuth)
 	authGroup.GET("/", indexHandler.ShowIndex)
+	authGroup.GET("/chat", indexHandler.ShowChat)
 
 	authGroup.GET("/ws", func(c echo.Context) error {
 		userID := c.Get("userID").(int64)

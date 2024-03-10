@@ -33,6 +33,15 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
 	}
+	if q.getContactedUsersStmt, err = db.PrepareContext(ctx, getContactedUsers); err != nil {
+		return nil, fmt.Errorf("error preparing query GetContactedUsers: %w", err)
+	}
+	if q.getDirectMessagesStmt, err = db.PrepareContext(ctx, getDirectMessages); err != nil {
+		return nil, fmt.Errorf("error preparing query GetDirectMessages: %w", err)
+	}
+	if q.getLastContactedUserStmt, err = db.PrepareContext(ctx, getLastContactedUser); err != nil {
+		return nil, fmt.Errorf("error preparing query GetLastContactedUser: %w", err)
+	}
 	if q.getUserForChatByIdStmt, err = db.PrepareContext(ctx, getUserForChatById); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserForChatById: %w", err)
 	}
@@ -63,6 +72,21 @@ func (q *Queries) Close() error {
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
+		}
+	}
+	if q.getContactedUsersStmt != nil {
+		if cerr := q.getContactedUsersStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getContactedUsersStmt: %w", cerr)
+		}
+	}
+	if q.getDirectMessagesStmt != nil {
+		if cerr := q.getDirectMessagesStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getDirectMessagesStmt: %w", cerr)
+		}
+	}
+	if q.getLastContactedUserStmt != nil {
+		if cerr := q.getLastContactedUserStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getLastContactedUserStmt: %w", cerr)
 		}
 	}
 	if q.getUserForChatByIdStmt != nil {
@@ -122,27 +146,33 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                      DBTX
-	tx                      *sql.Tx
-	createDirectMessageStmt *sql.Stmt
-	createMessageStmt       *sql.Stmt
-	createUserStmt          *sql.Stmt
-	getUserForChatByIdStmt  *sql.Stmt
-	getUserForLoginStmt     *sql.Stmt
-	getUsersByQueryStmt     *sql.Stmt
-	listUserStmt            *sql.Stmt
+	db                       DBTX
+	tx                       *sql.Tx
+	createDirectMessageStmt  *sql.Stmt
+	createMessageStmt        *sql.Stmt
+	createUserStmt           *sql.Stmt
+	getContactedUsersStmt    *sql.Stmt
+	getDirectMessagesStmt    *sql.Stmt
+	getLastContactedUserStmt *sql.Stmt
+	getUserForChatByIdStmt   *sql.Stmt
+	getUserForLoginStmt      *sql.Stmt
+	getUsersByQueryStmt      *sql.Stmt
+	listUserStmt             *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                      tx,
-		tx:                      tx,
-		createDirectMessageStmt: q.createDirectMessageStmt,
-		createMessageStmt:       q.createMessageStmt,
-		createUserStmt:          q.createUserStmt,
-		getUserForChatByIdStmt:  q.getUserForChatByIdStmt,
-		getUserForLoginStmt:     q.getUserForLoginStmt,
-		getUsersByQueryStmt:     q.getUsersByQueryStmt,
-		listUserStmt:            q.listUserStmt,
+		db:                       tx,
+		tx:                       tx,
+		createDirectMessageStmt:  q.createDirectMessageStmt,
+		createMessageStmt:        q.createMessageStmt,
+		createUserStmt:           q.createUserStmt,
+		getContactedUsersStmt:    q.getContactedUsersStmt,
+		getDirectMessagesStmt:    q.getDirectMessagesStmt,
+		getLastContactedUserStmt: q.getLastContactedUserStmt,
+		getUserForChatByIdStmt:   q.getUserForChatByIdStmt,
+		getUserForLoginStmt:      q.getUserForLoginStmt,
+		getUsersByQueryStmt:      q.getUsersByQueryStmt,
+		listUserStmt:             q.listUserStmt,
 	}
 }

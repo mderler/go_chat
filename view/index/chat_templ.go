@@ -17,7 +17,39 @@ type Message struct {
 	Left    bool
 }
 
-func ShowChat(groupName string, color string, messages []Message) templ.Component {
+type ChatParams struct {
+	GroupName string
+	Color     string
+	ContactID int64
+	Messages  []Message
+}
+
+func configureChat(contactId int64) templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_configureChat_a4e6`,
+		Function: `function __templ_configureChat_a4e6(contactId){const chatInput = document.querySelector('.chat-input')
+	messageContainer = document.getElementById('message-container')
+	if (chatInput) {
+		chatInput.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault()
+
+				if (chatInput.value === '') {
+					return
+				}
+				
+				sendMessage(false, contactId, chatInput.value)
+				chatInput.value = ''
+			}
+		})
+	}
+}`,
+		Call:       templ.SafeScript(`__templ_configureChat_a4e6`, contactId),
+		CallInline: templ.SafeScriptInline(`__templ_configureChat_a4e6`, contactId),
+	}
+}
+
+func ShowChat(chatParams ChatParams) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -34,7 +66,7 @@ func ShowChat(groupName string, color string, messages []Message) templ.Componen
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = userIcon(groupName, color).Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = userIcon(chatParams.GroupName, chatParams.Color).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -43,25 +75,33 @@ func ShowChat(groupName string, color string, messages []Message) templ.Componen
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(groupName)
+		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(chatParams.GroupName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 12, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 38, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><section class=\"chat-grid h-full border-inherit\"><div id=\"chat-container\" class=\"border-inherit flex flex-col overflow-y-auto\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><section class=\"chat-grid h-full border-inherit\"><div id=\"message-container\" class=\"border-inherit flex flex-col overflow-y-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, m := range messages {
+		for _, m := range chatParams.Messages {
 			templ_7745c5c3_Err = ChatMessage(m.Author, m.Color, m.Message, m.Left).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div></section>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = configureChat(chatParams.ContactID).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</section>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

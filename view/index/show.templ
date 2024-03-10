@@ -17,13 +17,13 @@ func extractFirstCharacters(name string) string {
 
 templ userIcon(name string, color string) {
 	<span
-		class={"h-8 w-8 mr-2 border rounded-full text-xl text-center", bgColor(color)}
+		class={ "h-8 w-8 mr-2 border rounded-full text-xl text-center", bgColor(color) }
 	>
 		{ extractFirstCharacters(name) }
 	</span>
 }
 
-templ Show(user model.GetUserForChatByIdRow, messages []Message) {
+templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams) {
 	@layout.Base() {
 		<div
 			class="bg-gray-100 flex h-screen text-white bg-gradient-to-b from-slate-600 to-[#240000]"
@@ -52,9 +52,9 @@ templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 					</ul>
 				</section>
 			</div>
-			<div class="flex flex-col grow pt-2 bg-slate-950/30 justify-center">
-				if len(messages) > 0 {
-					@ShowChat("Stefan Derler", "#f91bb3", messages)
+			<div id="chat-container" class="flex flex-col grow pt-2 bg-slate-950/30 justify-center">
+				if len(chatParams.Messages) > 0 {
+					@ShowChat(chatParams)
 				} else {
 					<div class="flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8 self-center">
 						<div class="text-4xl text-gray-300 font-extrabold">Here will be your chats!</div>
@@ -71,6 +71,7 @@ templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 				</div>
 				<div class="border border-black p-2 rounded-md bg-slate-950">
 					<input
+						id="user-search"
 						name="q"
 						type="text"
 						class="w-full bg-slate-950 text-white border-b border-slate-300 outline-none"
@@ -84,8 +85,26 @@ templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 			</form>
 		</dialog>
 		<script>
+			var messageContainer
+
 			const socket = new WebSocket(`ws://${window.location.host}/ws`)	
 			socket.binaryType = 'arraybuffer'
+
+			socket.onmessage = (event) => {
+				const message = unpackMessage(event.data)
+
+				if (messageContainer) {
+					messageContainer.innerHTML += message.text
+				}
+			}
+
+			socket.onclose = (event) => {
+				console.log('Socket closed', event)
+			}
+
+			socket.onerror = (event) => {
+				console.error('Socket error', event)
+			}
 
 			function unpackMessage(data) {
 				const isGroup = data[0] !== 0;
@@ -96,16 +115,6 @@ templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 				const text = new TextDecoder().decode(textBytes);
 
 				return { isGroup, userOrGroupId, text };
-			}
-
-			const chatContainer = document.getElementById('chat-container')
-
-			socket.onmessage = (event) => {
-				const message = unpackMessage(event.data)
-
-				if (chatContainer) {
-					chatContainer.innerHTML += message.text
-				}
 			}
 
 			function sendMessage(isGroup, userOrGroupId, text) {
@@ -127,29 +136,19 @@ templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 				socket.send(buffer)
 			}
 
-			const chatInput = document.querySelector('.chat-input')
-		
-			if (chatInput) {
-				chatInput.addEventListener('keydown', (event) => {
-					if (event.key === 'Enter' && !event.shiftKey) {
-						event.preventDefault()
-
-						if (chatInput.value === '') {
-							return
-						}
-						
-						sendMessage(false, 10, chatInput.value)
-						chatInput.value = ''
-					}
-				})
-			}
-
 			const dialog = document.getElementById('new-chat-dialog')
 
 			document.getElementById('new-chat-button')
 				.addEventListener('click', () => {
 					dialog.showModal()
 				})
+			
+			const userSearch = document.getElementById('user-search')
+
+			function selectContact() {
+				dialog.close()
+				userSearch.value = ''
+			}
 		</script>
 	}
 }

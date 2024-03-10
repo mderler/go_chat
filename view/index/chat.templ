@@ -2,19 +2,45 @@ package index
 
 type Message struct {
 	Author  string
-	Color string
+	Color   string
 	Message string
 	Left    bool
 }
 
-templ ShowChat(groupName string, color string, messages []Message) {
+type ChatParams struct {
+	GroupName string
+	Color     string
+	ContactID int64
+	Messages  []Message
+}
+
+script configureChat(contactId int64) {
+	const chatInput = document.querySelector('.chat-input')
+	messageContainer = document.getElementById('message-container')
+	if (chatInput) {
+		chatInput.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' && !event.shiftKey) {
+				event.preventDefault()
+
+				if (chatInput.value === '') {
+					return
+				}
+				
+				sendMessage(false, contactId, chatInput.value)
+				chatInput.value = ''
+			}
+		})
+	}
+}
+
+templ ShowChat(chatParams ChatParams) {
 	<div class="ml-2 text-2xl flex items-center">
-		@userIcon(groupName, color)
-		<span>{ groupName }</span>
+		@userIcon(chatParams.GroupName, chatParams.Color)
+		<span>{ chatParams.GroupName }</span>
 	</div>
 	<section class="chat-grid h-full border-inherit">
-		<div id="chat-container" class="border-inherit flex flex-col overflow-y-auto">
-			for _, m := range messages {
+		<div id="message-container" class="border-inherit flex flex-col overflow-y-auto">
+			for _, m := range chatParams.Messages {
 				@ChatMessage(m.Author, m.Color, m.Message, m.Left)
 			}
 		</div>
@@ -26,5 +52,6 @@ templ ShowChat(groupName string, color string, messages []Message) {
 				placeholder="Type a message..."
 			></textarea>
 		</div>
+		@configureChat(chatParams.ContactID)
 	</section>
 }

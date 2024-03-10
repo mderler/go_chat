@@ -36,6 +36,71 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, 
 	return id, err
 }
 
+const getContactedUsers = `-- name: GetContactedUsers :many
+SELECT user.id, user.full_name, user.color FROM user
+JOIN direct_message
+JOIN message ON message.id = direct_message.message_id
+WHERE
+  (direct_message.receiver_id = ?1 AND message.sender_id = user.id) OR 
+  (direct_message.receiver_id = user.id AND message.sender_id = ?1) AND
+  user.id != ?1
+ORDER BY message.created_at DESC
+`
+
+type GetContactedUsersRow struct {
+	ID       int64
+	FullName string
+	Color    string
+}
+
+func (q *Queries) GetContactedUsers(ctx context.Context, userID int64) ([]GetContactedUsersRow, error) {
+	rows, err := q.query(ctx, q.getContactedUsersStmt, getContactedUsers, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetContactedUsersRow{}
+	for rows.Next() {
+		var i GetContactedUsersRow
+		if err := rows.Scan(&i.ID, &i.FullName, &i.Color); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLastContactedUser = `-- name: GetLastContactedUser :one
+SELECT user.id, user.full_name, user.color FROM user
+JOIN direct_message
+JOIN message ON message.id = direct_message.message_id
+WHERE
+  (direct_message.receiver_id = ?1 AND message.sender_id = user.id) OR 
+  (direct_message.receiver_id = user.id AND message.sender_id = ?1) AND
+  user.id != ?1
+ORDER BY message.created_at DESC
+LIMIT 1
+`
+
+type GetLastContactedUserRow struct {
+	ID       int64
+	FullName string
+	Color    string
+}
+
+func (q *Queries) GetLastContactedUser(ctx context.Context, userID int64) (GetLastContactedUserRow, error) {
+	row := q.queryRow(ctx, q.getLastContactedUserStmt, getLastContactedUser, userID)
+	var i GetLastContactedUserRow
+	err := row.Scan(&i.ID, &i.FullName, &i.Color)
+	return i, err
+}
+
 const getUserForChatById = `-- name: GetUserForChatById :one
 SELECT full_name, color FROM user
 WHERE id = ?
@@ -72,8 +137,13 @@ func (q *Queries) GetUserForLogin(ctx context.Context, username string) (GetUser
 
 const getUsersByQuery = `-- name: GetUsersByQuery :many
 SELECT id, username, full_name FROM user
-WHERE username LIKE ?1 OR full_name LIKE ?1
+WHERE (username LIKE ?1 OR full_name LIKE ?1) AND id != ?2
 `
+
+type GetUsersByQueryParams struct {
+	Name string
+	ID   int64
+}
 
 type GetUsersByQueryRow struct {
 	ID       int64
@@ -81,8 +151,8 @@ type GetUsersByQueryRow struct {
 	FullName string
 }
 
-func (q *Queries) GetUsersByQuery(ctx context.Context, name string) ([]GetUsersByQueryRow, error) {
-	rows, err := q.query(ctx, q.getUsersByQueryStmt, getUsersByQuery, name)
+func (q *Queries) GetUsersByQuery(ctx context.Context, arg GetUsersByQueryParams) ([]GetUsersByQueryRow, error) {
+	rows, err := q.query(ctx, q.getUsersByQueryStmt, getUsersByQuery, arg.Name, arg.ID)
 	if err != nil {
 		return nil, err
 	}

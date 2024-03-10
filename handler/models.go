@@ -15,4 +15,5 @@ type UserRequest struct {
 const (
 	internalServerError string = "Internal Server Error"
 	incorrectPassword   string = "Incorrect Username or Password"
+	badRequest          string = "Bad Request"
 )

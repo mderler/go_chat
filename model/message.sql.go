@@ -47,3 +47,54 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (i
 	err := row.Scan(&id)
 	return id, err
 }
+
+const getDirectMessages = `-- name: GetDirectMessages :many
+SELECT message.sender_id, message.content, user.full_name, user.color FROM message
+JOIN user ON message.sender_id = user.id
+JOIN direct_message ON message.id = direct_message.message_id
+WHERE
+  (direct_message.receiver_id = ?1 AND message.sender_id = ?2) OR 
+  (direct_message.receiver_id = ?2 AND message.sender_id = ?1)
+ORDER BY message.created_at ASC
+LIMIT 10
+`
+
+type GetDirectMessagesParams struct {
+	UserID    int64
+	ContactID int64
+}
+
+type GetDirectMessagesRow struct {
+	SenderID int64
+	Content  string
+	FullName string
+	Color    string
+}
+
+func (q *Queries) GetDirectMessages(ctx context.Context, arg GetDirectMessagesParams) ([]GetDirectMessagesRow, error) {
+	rows, err := q.query(ctx, q.getDirectMessagesStmt, getDirectMessages, arg.UserID, arg.ContactID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []GetDirectMessagesRow{}
+	for rows.Next() {
+		var i GetDirectMessagesRow
+		if err := rows.Scan(
+			&i.SenderID,
+			&i.Content,
+			&i.FullName,
+			&i.Color,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

@@ -18,9 +18,10 @@ func NewUserHandler(queries *model.Queries) *UserHandler {
 }
 
 func (h *UserHandler) ShowUserList(c echo.Context) error {
+	userID := c.Get("userID").(int64)
 	query := fmt.Sprintf("%%%s%%", c.QueryParam("q"))
 
-	users, err := h.queries.GetUsersByQuery(c.Request().Context(), query)
+	users, err := h.queries.GetUsersByQuery(c.Request().Context(), model.GetUsersByQueryParams{Name: query, ID: userID})
 	if err != nil {
 		log.Println(err)
 		return err
