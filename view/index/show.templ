@@ -3,6 +3,7 @@ package index
 import (
 	"strings"
 	"github.com/mderler/go_chat/view/layout"
+	"github.com/mderler/go_chat/model"
 )
 
 func extractFirstCharacters(name string) string {
@@ -22,7 +23,7 @@ templ userIcon(name string, color string) {
 	</span>
 }
 
-templ Show(fullName string, messages []Message) {
+templ Show(user model.GetUserForChatByIdRow, messages []Message) {
 	@layout.Base() {
 		<div
 			class="bg-gray-100 flex h-screen text-white bg-gradient-to-b from-slate-600 to-[#240000]"
@@ -31,8 +32,8 @@ templ Show(fullName string, messages []Message) {
 				<div class="flex flex-row gap-2 items-center select-none">
 					<div class="text-xl ml-2 flex items-center">
 						<div class="ml-2 flex items-center">
-							@userIcon(fullName, "#1b95f9")
-							<span class="select-text">{ fullName }</span>
+							@userIcon(user.FullName, user.Color)
+							<span class="select-text">{ user.FullName }</span>
 						</div>
 						<button hx-post="/logout">&#x1F6AA;</button>
 					</div>
@@ -55,7 +56,7 @@ templ Show(fullName string, messages []Message) {
 				if len(messages) > 0 {
 					@ShowChat("Stefan Derler", "#f91bb3", messages)
 				} else {
-					<div class="flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8">
+					<div class="flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8 self-center">
 						<div class="text-4xl text-gray-300 font-extrabold">Here will be your chats!</div>
 						<div class="text-xl italic text-gray-400 text-center text-pretty w-64 m-auto">Click on the "New Chat" Icon at the top left to start a conversation.</div>
 					</div>
@@ -83,17 +84,66 @@ templ Show(fullName string, messages []Message) {
 			</form>
 		</dialog>
 		<script>
-			function addChatInputEventListener() {
-				document.querySelector('.chat-input')
-					.addEventListener('keydown', (event) => {
-						if (event.key === 'Enter' && !event.shiftKey) {
-							event.preventDefault()
-							console.log('Send message:', chatInput.value)
-							chatInput.value = ''
-						}
-					})
+			const socket = new WebSocket(`ws://${window.location.host}/ws`)	
+			socket.binaryType = 'arraybuffer'
+
+			function unpackMessage(data) {
+				const isGroup = data[0] !== 0;
+
+				const userOrGroupId = new DataView(data).getBigUint64(1, true);
+
+				const textBytes = data.slice(9);
+				const text = new TextDecoder().decode(textBytes);
+
+				return { isGroup, userOrGroupId, text };
 			}
-			
+
+			const chatContainer = document.getElementById('chat-container')
+
+			socket.onmessage = (event) => {
+				const message = unpackMessage(event.data)
+
+				if (chatContainer) {
+					chatContainer.innerHTML += message.text
+				}
+			}
+
+			function sendMessage(isGroup, userOrGroupId, text) {
+				const typeBit = isGroup ? 1 : 0;
+
+				const textBytes = new TextEncoder().encode(text);
+
+				const buffer = new ArrayBuffer(9 + textBytes.length);
+				const view = new DataView(buffer);
+
+				view.setUint8(0, typeBit);
+
+				view.setBigUint64(1, BigInt(userOrGroupId), true);
+
+				for (let i = 0; i < textBytes.length; i++) {
+					view.setUint8(i + 9, textBytes[i]);
+				}
+
+				socket.send(buffer)
+			}
+
+			const chatInput = document.querySelector('.chat-input')
+		
+			if (chatInput) {
+				chatInput.addEventListener('keydown', (event) => {
+					if (event.key === 'Enter' && !event.shiftKey) {
+						event.preventDefault()
+
+						if (chatInput.value === '') {
+							return
+						}
+						
+						sendMessage(false, 10, chatInput.value)
+						chatInput.value = ''
+					}
+				})
+			}
+
 			const dialog = document.getElementById('new-chat-dialog')
 
 			document.getElementById('new-chat-button')

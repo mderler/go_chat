@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	gochat "github.com/mderler/go_chat"
+	"github.com/mderler/go_chat/chat"
 	"github.com/mderler/go_chat/handler"
 	"github.com/mderler/go_chat/model"
 	"github.com/pressly/goose/v3"
@@ -47,12 +48,6 @@ func main() {
 
 	e.StaticFS("/public", assetsFs)
 
-	indexHandler := handler.NewIndexHandler(queries)
-
-	authGroup := e.Group("")
-	authGroup.Use(handler.CookieAuth)
-	authGroup.GET("/", indexHandler.ShowIndex)
-
 	userHandler := handler.NewUserHandler(queries)
 	e.GET("/user", userHandler.ShowUserList)
 
@@ -65,6 +60,21 @@ func main() {
 	e.POST("/login", loginHandler.Login)
 	e.POST("/logout", loginHandler.Logout)
 	e.POST("/register", loginHandler.Register)
+
+	hub := chat.NewHub()
+	go hub.Run()
+
+	indexHandler := handler.NewIndexHandler(queries)
+
+	authGroup := e.Group("")
+	authGroup.Use(handler.CookieAuth)
+	authGroup.GET("/", indexHandler.ShowIndex)
+
+	authGroup.GET("/ws", func(c echo.Context) error {
+		userID := c.Get("userID").(int64)
+		chat.NewClient(hub, userID, queries, db, c.Response(), c.Request())
+		return nil
+	})
 
 	e.Logger.Fatal(e.Start(":8000"))
 }

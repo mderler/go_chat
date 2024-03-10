@@ -1,9 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
 CREATE TABLE message (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     sender_id INTEGER NOT NULL,
-    message VARCHAR(1024) NOT NULL,
+    content VARCHAR(1024) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (sender_id) REFERENCES users (id)
 );
@@ -17,7 +17,7 @@ CREATE TABLE direct_message (
 );
 
 CREATE TABLE "group" (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -43,7 +43,7 @@ CREATE TABLE group_message (
 -- +goose StatementBegin
 DROP TABLE message;
 DROP TABLE direct_message;
-DROP TABLE group;
+DROP TABLE "group";
 DROP TABLE user_group;
 DROP TABLE group_message;
 -- +goose StatementEnd

@@ -2,6 +2,7 @@ package index
 
 type Message struct {
 	Author  string
+	Color string
 	Message string
 	Left    bool
 }
@@ -12,9 +13,9 @@ templ ShowChat(groupName string, color string, messages []Message) {
 		<span>{ groupName }</span>
 	</div>
 	<section class="chat-grid h-full border-inherit">
-		<div class="border-inherit flex flex-col overflow-y-auto">
+		<div id="chat-container" class="border-inherit flex flex-col overflow-y-auto">
 			for _, m := range messages {
-				@message(m.Author, m.Message, m.Left)
+				@ChatMessage(m.Author, m.Color, m.Message, m.Left)
 			}
 		</div>
 		<div

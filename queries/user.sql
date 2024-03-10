@@ -13,8 +13,8 @@ ORDER BY name;
 SELECT id, password FROM user
 WHERE username = ?;
 
--- name: GetFullNameById :one
-SELECT full_name FROM user
+-- name: GetUserForChatById :one
+SELECT full_name, color FROM user
 WHERE id = ?;
 
 -- name: GetUsersByQuery :many

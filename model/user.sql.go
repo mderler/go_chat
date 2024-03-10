@@ -36,16 +36,21 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int64, 
 	return id, err
 }
 
-const getFullNameById = `-- name: GetFullNameById :one
-SELECT full_name FROM user
+const getUserForChatById = `-- name: GetUserForChatById :one
+SELECT full_name, color FROM user
 WHERE id = ?
 `
 
-func (q *Queries) GetFullNameById(ctx context.Context, id int64) (string, error) {
-	row := q.queryRow(ctx, q.getFullNameByIdStmt, getFullNameById, id)
-	var full_name string
-	err := row.Scan(&full_name)
-	return full_name, err
+type GetUserForChatByIdRow struct {
+	FullName string
+	Color    string
+}
+
+func (q *Queries) GetUserForChatById(ctx context.Context, id int64) (GetUserForChatByIdRow, error) {
+	row := q.queryRow(ctx, q.getUserForChatByIdStmt, getUserForChatById, id)
+	var i GetUserForChatByIdRow
+	err := row.Scan(&i.FullName, &i.Color)
+	return i, err
 }
 
 const getUserForLogin = `-- name: GetUserForLogin :one

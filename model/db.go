@@ -24,11 +24,17 @@ func New(db DBTX) *Queries {
 func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 	q := Queries{db: db}
 	var err error
+	if q.createDirectMessageStmt, err = db.PrepareContext(ctx, createDirectMessage); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateDirectMessage: %w", err)
+	}
+	if q.createMessageStmt, err = db.PrepareContext(ctx, createMessage); err != nil {
+		return nil, fmt.Errorf("error preparing query CreateMessage: %w", err)
+	}
 	if q.createUserStmt, err = db.PrepareContext(ctx, createUser); err != nil {
 		return nil, fmt.Errorf("error preparing query CreateUser: %w", err)
 	}
-	if q.getFullNameByIdStmt, err = db.PrepareContext(ctx, getFullNameById); err != nil {
-		return nil, fmt.Errorf("error preparing query GetFullNameById: %w", err)
+	if q.getUserForChatByIdStmt, err = db.PrepareContext(ctx, getUserForChatById); err != nil {
+		return nil, fmt.Errorf("error preparing query GetUserForChatById: %w", err)
 	}
 	if q.getUserForLoginStmt, err = db.PrepareContext(ctx, getUserForLogin); err != nil {
 		return nil, fmt.Errorf("error preparing query GetUserForLogin: %w", err)
@@ -44,14 +50,24 @@ func Prepare(ctx context.Context, db DBTX) (*Queries, error) {
 
 func (q *Queries) Close() error {
 	var err error
+	if q.createDirectMessageStmt != nil {
+		if cerr := q.createDirectMessageStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createDirectMessageStmt: %w", cerr)
+		}
+	}
+	if q.createMessageStmt != nil {
+		if cerr := q.createMessageStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing createMessageStmt: %w", cerr)
+		}
+	}
 	if q.createUserStmt != nil {
 		if cerr := q.createUserStmt.Close(); cerr != nil {
 			err = fmt.Errorf("error closing createUserStmt: %w", cerr)
 		}
 	}
-	if q.getFullNameByIdStmt != nil {
-		if cerr := q.getFullNameByIdStmt.Close(); cerr != nil {
-			err = fmt.Errorf("error closing getFullNameByIdStmt: %w", cerr)
+	if q.getUserForChatByIdStmt != nil {
+		if cerr := q.getUserForChatByIdStmt.Close(); cerr != nil {
+			err = fmt.Errorf("error closing getUserForChatByIdStmt: %w", cerr)
 		}
 	}
 	if q.getUserForLoginStmt != nil {
@@ -106,23 +122,27 @@ func (q *Queries) queryRow(ctx context.Context, stmt *sql.Stmt, query string, ar
 }
 
 type Queries struct {
-	db                  DBTX
-	tx                  *sql.Tx
-	createUserStmt      *sql.Stmt
-	getFullNameByIdStmt *sql.Stmt
-	getUserForLoginStmt *sql.Stmt
-	getUsersByQueryStmt *sql.Stmt
-	listUserStmt        *sql.Stmt
+	db                      DBTX
+	tx                      *sql.Tx
+	createDirectMessageStmt *sql.Stmt
+	createMessageStmt       *sql.Stmt
+	createUserStmt          *sql.Stmt
+	getUserForChatByIdStmt  *sql.Stmt
+	getUserForLoginStmt     *sql.Stmt
+	getUsersByQueryStmt     *sql.Stmt
+	listUserStmt            *sql.Stmt
 }
 
 func (q *Queries) WithTx(tx *sql.Tx) *Queries {
 	return &Queries{
-		db:                  tx,
-		tx:                  tx,
-		createUserStmt:      q.createUserStmt,
-		getFullNameByIdStmt: q.getFullNameByIdStmt,
-		getUserForLoginStmt: q.getUserForLoginStmt,
-		getUsersByQueryStmt: q.getUsersByQueryStmt,
-		listUserStmt:        q.listUserStmt,
+		db:                      tx,
+		tx:                      tx,
+		createDirectMessageStmt: q.createDirectMessageStmt,
+		createMessageStmt:       q.createMessageStmt,
+		createUserStmt:          q.createUserStmt,
+		getUserForChatByIdStmt:  q.getUserForChatByIdStmt,
+		getUserForLoginStmt:     q.getUserForLoginStmt,
+		getUsersByQueryStmt:     q.getUsersByQueryStmt,
+		listUserStmt:            q.listUserStmt,
 	}
 }

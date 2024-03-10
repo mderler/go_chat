@@ -16,7 +16,7 @@ import (
 	"golang.org/x/exp/rand"
 )
 
-var userColors = []string{"#FF5733", "#33FF57", "#5733FF", "#33FFC5", "#FF5733", "#33FF57", "#5733FF", "#33FFC5"}
+var userColors = []string{"#aa2712", "#01b522", "#0176b5", "#b5019a", "#1601b5", "#e29104"}
 
 type LoginHandler struct {
 	queries *model.Queries

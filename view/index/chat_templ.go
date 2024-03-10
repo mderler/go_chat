@@ -12,6 +12,7 @@ import "bytes"
 
 type Message struct {
 	Author  string
+	Color   string
 	Message string
 	Left    bool
 }
@@ -44,18 +45,18 @@ func ShowChat(groupName string, color string, messages []Message) templ.Componen
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(groupName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 11, Col: 19}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 12, Col: 19}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><section class=\"chat-grid h-full border-inherit\"><div class=\"border-inherit flex flex-col overflow-y-auto\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><section class=\"chat-grid h-full border-inherit\"><div id=\"chat-container\" class=\"border-inherit flex flex-col overflow-y-auto\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		for _, m := range messages {
-			templ_7745c5c3_Err = message(m.Author, m.Message, m.Left).Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = ChatMessage(m.Author, m.Color, m.Message, m.Left).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

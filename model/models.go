@@ -4,7 +4,32 @@
 
 package model
 
-import ()
+import (
+	"database/sql"
+)
+
+type DirectMessage struct {
+	ReceiverID int64
+	MessageID  int64
+}
+
+type Group struct {
+	ID        int64
+	Name      string
+	CreatedAt sql.NullTime
+}
+
+type GroupMessage struct {
+	GroupID   int64
+	MessageID int64
+}
+
+type Message struct {
+	ID        int64
+	SenderID  int64
+	Content   string
+	CreatedAt sql.NullTime
+}
 
 type User struct {
 	ID       int64
@@ -12,4 +37,9 @@ type User struct {
 	FullName string
 	Password string
 	Color    string
+}
+
+type UserGroup struct {
+	UserID  int64
+	GroupID int64
 }

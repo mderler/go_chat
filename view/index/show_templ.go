@@ -11,6 +11,7 @@ import "io"
 import "bytes"
 
 import (
+	"github.com/mderler/go_chat/model"
 	"github.com/mderler/go_chat/view/layout"
 	"strings"
 )
@@ -57,7 +58,7 @@ func userIcon(name string, color string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(extractFirstCharacters(name))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 20, Col: 32}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 21, Col: 32}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -74,7 +75,7 @@ func userIcon(name string, color string) templ.Component {
 	})
 }
 
-func Show(fullName string, messages []Message) templ.Component {
+func Show(user model.GetUserForChatByIdRow, messages []Message) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -97,7 +98,7 @@ func Show(fullName string, messages []Message) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = userIcon(fullName, "#1b95f9").Render(ctx, templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = userIcon(user.FullName, user.Color).Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -106,9 +107,9 @@ func Show(fullName string, messages []Message) templ.Component {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var6 string
-			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(fullName)
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(user.FullName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 34, Col: 43}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/show.templ`, Line: 35, Col: 48}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -124,12 +125,12 @@ func Show(fullName string, messages []Message) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8\"><div class=\"text-4xl text-gray-300 font-extrabold\">Here will be your chats!</div><div class=\"text-xl italic text-gray-400 text-center text-pretty w-64 m-auto\">Click on the \"New Chat\" Icon at the top left to start a conversation.</div></div>")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"flex flex-col text-pretty border-[16px] border-dashed border-gray-300 rounded-xl h-72 max-w-92 p-8 self-center\"><div class=\"text-4xl text-gray-300 font-extrabold\">Here will be your chats!</div><div class=\"text-xl italic text-gray-400 text-center text-pretty w-64 m-auto\">Click on the \"New Chat\" Icon at the top left to start a conversation.</div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><dialog id=\"new-chat-dialog\" class=\"fixed text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]\"><form method=\"dialog\"><div class=\"flex flex-row justify-between pb-2 mb-2\"><h1 class=\"text-4xl\">New Chat</h1><button type=\"cancel\" class=\"text-4xl text-red-500 select-none\">&times;</button></div><div class=\"border border-black p-2 rounded-md bg-slate-950\"><input name=\"q\" type=\"text\" class=\"w-full bg-slate-950 text-white border-b border-slate-300 outline-none\" placeholder=\"Search...\" hx-get=\"/user\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\"></div><div id=\"search-results\" class=\"min-h-64 flex flex-col border border-black rounded-md mt-2 p-2 gap-y-2 select-none\"></div></form></dialog><script>\n\t\t\tfunction addChatInputEventListener() {\n\t\t\t\tdocument.querySelector('.chat-input')\n\t\t\t\t\t.addEventListener('keydown', (event) => {\n\t\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\t\tevent.preventDefault()\n\t\t\t\t\t\t\tconsole.log('Send message:', chatInput.value)\n\t\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t\t}\n\t\t\t\t\t})\n\t\t\t}\n\t\t\t\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div><dialog id=\"new-chat-dialog\" class=\"fixed text-white border border-black rounded-xl px-4 py-4 bg-slate-900 w-[48rem]\"><form method=\"dialog\"><div class=\"flex flex-row justify-between pb-2 mb-2\"><h1 class=\"text-4xl\">New Chat</h1><button type=\"cancel\" class=\"text-4xl text-red-500 select-none\">&times;</button></div><div class=\"border border-black p-2 rounded-md bg-slate-950\"><input name=\"q\" type=\"text\" class=\"w-full bg-slate-950 text-white border-b border-slate-300 outline-none\" placeholder=\"Search...\" hx-get=\"/user\" hx-trigger=\"keyup changed delay:500ms\" hx-target=\"#search-results\"></div><div id=\"search-results\" class=\"min-h-64 flex flex-col border border-black rounded-md mt-2 p-2 gap-y-2 select-none\"></div></form></dialog><script>\n\t\t\tconst socket = new WebSocket(`ws://${window.location.host}/ws`)\t\n\t\t\tsocket.binaryType = 'arraybuffer'\n\n\t\t\tfunction unpackMessage(data) {\n\t\t\t\tconst isGroup = data[0] !== 0;\n\n\t\t\t\tconst userOrGroupId = new DataView(data).getBigUint64(1, true);\n\n\t\t\t\tconst textBytes = data.slice(9);\n\t\t\t\tconst text = new TextDecoder().decode(textBytes);\n\n\t\t\t\treturn { isGroup, userOrGroupId, text };\n\t\t\t}\n\n\t\t\tconst chatContainer = document.getElementById('chat-container')\n\n\t\t\tsocket.onmessage = (event) => {\n\t\t\t\tconst message = unpackMessage(event.data)\n\n\t\t\t\tif (chatContainer) {\n\t\t\t\t\tchatContainer.innerHTML += message.text\n\t\t\t\t}\n\t\t\t}\n\n\t\t\tfunction sendMessage(isGroup, userOrGroupId, text) {\n\t\t\t\tconst typeBit = isGroup ? 1 : 0;\n\n\t\t\t\tconst textBytes = new TextEncoder().encode(text);\n\n\t\t\t\tconst buffer = new ArrayBuffer(9 + textBytes.length);\n\t\t\t\tconst view = new DataView(buffer);\n\n\t\t\t\tview.setUint8(0, typeBit);\n\n\t\t\t\tview.setBigUint64(1, BigInt(userOrGroupId), true);\n\n\t\t\t\tfor (let i = 0; i < textBytes.length; i++) {\n\t\t\t\t\tview.setUint8(i + 9, textBytes[i]);\n\t\t\t\t}\n\n\t\t\t\tsocket.send(buffer)\n\t\t\t}\n\n\t\t\tconst chatInput = document.querySelector('.chat-input')\n\t\t\n\t\t\tif (chatInput) {\n\t\t\t\tchatInput.addEventListener('keydown', (event) => {\n\t\t\t\t\tif (event.key === 'Enter' && !event.shiftKey) {\n\t\t\t\t\t\tevent.preventDefault()\n\n\t\t\t\t\t\tif (chatInput.value === '') {\n\t\t\t\t\t\t\treturn\n\t\t\t\t\t\t}\n\t\t\t\t\t\t\n\t\t\t\t\t\tsendMessage(false, 10, chatInput.value)\n\t\t\t\t\t\tchatInput.value = ''\n\t\t\t\t\t}\n\t\t\t\t})\n\t\t\t}\n\n\t\t\tconst dialog = document.getElementById('new-chat-dialog')\n\n\t\t\tdocument.getElementById('new-chat-button')\n\t\t\t\t.addEventListener('click', () => {\n\t\t\t\t\tdialog.showModal()\n\t\t\t\t})\n\t\t</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
