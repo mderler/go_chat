@@ -115,7 +115,7 @@ func Show(user model.GetUserForChatByIdRow, chatParams ChatParams) templ.Compone
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button id=\"new-chat-button\" class=\"ml-auto mr-2\">&#x270F;</button></div><section class=\"w-80 grow\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section></div><div id=\"chat-container\" class=\"flex flex-col grow pt-2 bg-slate-950/30 justify-center\">")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</span></div><button hx-post=\"/logout\">&#x1F6AA;</button></div><button id=\"new-chat-button\" class=\"ml-auto mr-2\">&#x270F;</button></div><section class=\"w-80 grow\"><ul class=\"flex flex-col gap-2 mx-2 mt-2\"><div class=\"border border-black rounded-md flex px-1 py-1\"><span class=\"h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center\">SD</span> <span>Stefan Derler</span></div></ul></section></div><div id=\"chat-container\" class=\"flex flex-col grow bg-slate-950/30 justify-center h-screen max-h-screen\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

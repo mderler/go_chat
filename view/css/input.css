@@ -2,11 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.chat-grid {
-    display: grid;
-    grid-template-rows: 1fr auto;
-}
-
 .chat-input {
     height: 2rem;
     line-height: 1rem;

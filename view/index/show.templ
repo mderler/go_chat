@@ -52,7 +52,7 @@ templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams) {
 					</ul>
 				</section>
 			</div>
-			<div id="chat-container" class="flex flex-col grow pt-2 bg-slate-950/30 justify-center">
+			<div id="chat-container" class="flex flex-col grow bg-slate-950/30 justify-center h-screen max-h-screen">
 				if len(chatParams.Messages) > 0 {
 					@ShowChat(chatParams)
 				} else {
