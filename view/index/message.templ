@@ -4,12 +4,12 @@ templ ChatMessage(author string, color string, message string, left bool) {
 	if left {
 		<div class="left-chat">
 			<div class={ "font-bold", textColor(color) }>{ author }</div>
-			<p class="text-white">{ message }</p>
+			<p class="text-white break-words">{ message }</p>
 		</div>
 	} else {
 		<div class="right-chat">
 			<div class={ "font-bold", textColor(color) }>{ author }</div>
-			<p class="text-white">{ message }</p>
+			<p class="text-white break-words">{ message }</p>
 		</div>
 	}
 }

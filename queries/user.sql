@@ -14,7 +14,7 @@ SELECT id, password FROM user
 WHERE username = ?;
 
 -- name: GetUserForChatById :one
-SELECT full_name, color FROM user
+SELECT id, full_name, color FROM user
 WHERE id = ?;
 
 -- name: GetUsersByQuery :many

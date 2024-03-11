@@ -44,6 +44,7 @@ WHERE
   (direct_message.receiver_id = ?1 AND message.sender_id = user.id) OR 
   (direct_message.receiver_id = user.id AND message.sender_id = ?1) AND
   user.id != ?1
+GROUP BY user.id
 ORDER BY message.created_at DESC
 `
 
@@ -102,11 +103,12 @@ func (q *Queries) GetLastContactedUser(ctx context.Context, userID int64) (GetLa
 }
 
 const getUserForChatById = `-- name: GetUserForChatById :one
-SELECT full_name, color FROM user
+SELECT id, full_name, color FROM user
 WHERE id = ?
 `
 
 type GetUserForChatByIdRow struct {
+	ID       int64
 	FullName string
 	Color    string
 }
@@ -114,7 +116,7 @@ type GetUserForChatByIdRow struct {
 func (q *Queries) GetUserForChatById(ctx context.Context, id int64) (GetUserForChatByIdRow, error) {
 	row := q.queryRow(ctx, q.getUserForChatByIdStmt, getUserForChatById, id)
 	var i GetUserForChatByIdRow
-	err := row.Scan(&i.FullName, &i.Color)
+	err := row.Scan(&i.ID, &i.FullName, &i.Color)
 	return i, err
 }
 
