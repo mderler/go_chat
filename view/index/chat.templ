@@ -34,7 +34,7 @@ script configureChat(contactId int64) {
 }
 
 templ ShowChat(chatParams ChatParams) {
-	<div class="ml-2 mt-2 text-2xl flex items-center">
+	<div class="ml-2 my-2 text-2xl flex items-center">
 		@userIcon(chatParams.GroupName, chatParams.Color)
 		<span>{ chatParams.GroupName }</span>
 	</div>
