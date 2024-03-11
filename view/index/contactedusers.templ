@@ -1,0 +1,14 @@
+package index
+
+import (
+	"github.com/mderler/go_chat/model"
+)
+
+templ ShowContactedUsers(contactedUsers []model.GetContactedUsersRow) {
+	for _, user := range contactedUsers {
+		<div class="border border-black rounded-md flex px-1 py-1 hover:border-white cursor-pointer">
+			@userIcon(user.FullName, user.Color)
+			<span>{ user.FullName }</span>
+		</div>
+	}
+}

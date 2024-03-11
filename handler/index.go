@@ -31,7 +31,7 @@ func (h *IndexHandler) ShowIndex(c echo.Context) error {
 	if err != nil {
 		log.Printf("Error getting last contacted user: %v", err)
 		if err == sql.ErrNoRows {
-			return render(c, index.Show(user, index.ChatParams{}))
+			return render(c, index.Show(user, index.ChatParams{}, []model.GetContactedUsersRow{}))
 		}
 		return render(c, layout.ErrorBase(internalServerError))
 	}
@@ -42,6 +42,11 @@ func (h *IndexHandler) ShowIndex(c echo.Context) error {
 	})
 	if err != nil {
 		log.Printf("Error getting messages: %v", err)
+		return render(c, layout.ErrorBase(internalServerError))
+	}
+
+	contacedUsers, err := h.queries.GetContactedUsers(c.Request().Context(), userID)
+	if err != nil {
 		return render(c, layout.ErrorBase(internalServerError))
 	}
 
@@ -63,7 +68,7 @@ func (h *IndexHandler) ShowIndex(c echo.Context) error {
 		Messages:  messageViews,
 	}
 
-	return render(c, index.Show(user, chatParams))
+	return render(c, index.Show(user, chatParams, contacedUsers))
 }
 
 func (h *IndexHandler) ShowChat(c echo.Context) error {
@@ -107,4 +112,15 @@ func (h *IndexHandler) ShowChat(c echo.Context) error {
 	}
 
 	return render(c, index.ShowChat(chatParams))
+}
+
+func (h *IndexHandler) ShowContactedUsers(c echo.Context) error {
+	userID := c.Get("userID").(int64)
+
+	contacedUsers, err := h.queries.GetContactedUsers(c.Request().Context(), userID)
+	if err != nil {
+		return render(c, layout.ErrorBase(internalServerError))
+	}
+
+	return render(c, index.ShowContactedUsers(contacedUsers))
 }

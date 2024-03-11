@@ -23,7 +23,7 @@ templ userIcon(name string, color string) {
 	</span>
 }
 
-templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams) {
+templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams, contactedUsers []model.GetContactedUsersRow) {
 	@layout.Base() {
 		<div
 			class="bg-gray-100 flex h-screen text-white bg-gradient-to-b from-slate-600 to-[#240000]"
@@ -41,14 +41,7 @@ templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams) {
 				</div>
 				<section class="w-80 grow">
 					<ul class="flex flex-col gap-2 mx-2 mt-2">
-						<div class="border border-black rounded-md flex px-1 py-1">
-							<span
-								class="h-8 w-8 mr-2 border rounded-full bg-blue-400 text-xl text-center"
-							>
-								SD
-							</span>
-							<span>Stefan Derler</span>
-						</div>
+						@ShowContactedUsers(contactedUsers)
 					</ul>
 				</section>
 			</div>

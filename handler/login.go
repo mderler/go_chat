@@ -7,13 +7,14 @@ import (
 	"net/http"
 	"time"
 
+	"math/rand/v2"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/labstack/echo/v4"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/mderler/go_chat/model"
 	"github.com/mderler/go_chat/view/layout"
 	"github.com/mderler/go_chat/view/login"
-	"golang.org/x/exp/rand"
 )
 
 var userColors = []string{"#aa2712", "#01b522", "#0176b5", "#b5019a", "#1601b5", "#e29104"}
@@ -70,7 +71,7 @@ func (h *LoginHandler) Register(c echo.Context) error {
 		return render(c, login.RegisterForm(username, fullName, "", "", "", passwordConfirmError))
 	}
 
-	randomIndex := rand.Intn(len(userColors))
+	randomIndex := rand.IntN(len(userColors))
 
 	createUserParams := model.CreateUserParams{
 		Username: user.Username,
