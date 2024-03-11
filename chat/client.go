@@ -145,12 +145,14 @@ func (c *Client) writePump() {
 
 			binary.Write(&buf, binary.LittleEndian, message.userOrGroupID)
 
-			index.ChatMessage(
-				message.userForChat.FullName,
-				message.userForChat.Color,
-				message.text,
-				message.userForChat.ID != c.userID).
-				Render(context.TODO(), &buf)
+			messageView := index.Message{
+				Author:  message.userForChat.FullName,
+				Color:   message.userForChat.Color,
+				Message: message.text,
+				Left:    message.userForChat.ID != c.userID,
+			}
+
+			index.ChatMessage(false, messageView).Render(context.TODO(), &buf)
 
 			w.Write(buf.Bytes())
 

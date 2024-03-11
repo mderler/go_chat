@@ -70,6 +70,7 @@ func main() {
 
 	authGroup.GET("/", indexHandler.ShowIndex)
 	authGroup.GET("/chat", indexHandler.ShowChat)
+	authGroup.GET("/messages", indexHandler.ShowMessages)
 
 	authGroup.GET("/ws", func(c echo.Context) error {
 		userID := c.Get("userID").(int64)

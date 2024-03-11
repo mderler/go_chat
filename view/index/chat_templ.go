@@ -10,13 +10,6 @@ import "context"
 import "io"
 import "bytes"
 
-type Message struct {
-	Author  string
-	Color   string
-	Message string
-	Left    bool
-}
-
 type ChatParams struct {
 	GroupName string
 	Color     string
@@ -26,9 +19,10 @@ type ChatParams struct {
 
 func configureChat(contactId int64) templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_configureChat_a4e6`,
-		Function: `function __templ_configureChat_a4e6(contactId){const chatInput = document.querySelector('.chat-input')
+		Name: `__templ_configureChat_62db`,
+		Function: `function __templ_configureChat_62db(contactId){const chatInput = document.querySelector('.chat-input')
 	messageContainer = document.getElementById('message-container')
+	messageContainer.scrollTop = messageContainer.scrollHeight
 	if (chatInput) {
 		chatInput.addEventListener('keydown', (event) => {
 			if (event.key === 'Enter' && !event.shiftKey) {
@@ -44,8 +38,8 @@ func configureChat(contactId int64) templ.ComponentScript {
 		})
 	}
 }`,
-		Call:       templ.SafeScript(`__templ_configureChat_a4e6`, contactId),
-		CallInline: templ.SafeScriptInline(`__templ_configureChat_a4e6`, contactId),
+		Call:       templ.SafeScript(`__templ_configureChat_62db`, contactId),
+		CallInline: templ.SafeScriptInline(`__templ_configureChat_62db`, contactId),
 	}
 }
 
@@ -77,7 +71,7 @@ func ShowChat(chatParams ChatParams) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(chatParams.GroupName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 38, Col: 30}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `view/index/chat.templ`, Line: 32, Col: 30}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -87,11 +81,9 @@ func ShowChat(chatParams ChatParams) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		for _, m := range chatParams.Messages {
-			templ_7745c5c3_Err = ChatMessage(m.Author, m.Color, m.Message, m.Left).Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
+		templ_7745c5c3_Err = ShowMessages(chatParams.ContactID, 1, chatParams.Messages).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div>")
 		if templ_7745c5c3_Err != nil {

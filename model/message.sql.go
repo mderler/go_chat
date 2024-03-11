@@ -49,19 +49,24 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (i
 }
 
 const getDirectMessages = `-- name: GetDirectMessages :many
-SELECT message.sender_id, message.content, user.full_name, user.color FROM message
-JOIN user ON message.sender_id = user.id
-JOIN direct_message ON message.id = direct_message.message_id
-WHERE
-  (direct_message.receiver_id = ?1 AND message.sender_id = ?2) OR 
-  (direct_message.receiver_id = ?2 AND message.sender_id = ?1)
-ORDER BY message.created_at ASC
-LIMIT 10
+SELECT messages.sender_id, messages.content, messages.full_name, messages.color
+FROM (
+  SELECT message.id, message.sender_id, message.content, user.full_name, user.color FROM message
+  JOIN user ON message.sender_id = user.id
+  JOIN direct_message ON message.id = direct_message.message_id
+  WHERE
+    (direct_message.receiver_id = ?1 AND message.sender_id = ?2) OR 
+    (direct_message.receiver_id = ?2 AND message.sender_id = ?1)
+  ORDER BY message.id DESC
+  LIMIT 25 OFFSET ?3
+) AS messages
+ORDER BY messages.id ASC
 `
 
 type GetDirectMessagesParams struct {
 	UserID    int64
 	ContactID int64
+	Offset    int64
 }
 
 type GetDirectMessagesRow struct {
@@ -72,7 +77,7 @@ type GetDirectMessagesRow struct {
 }
 
 func (q *Queries) GetDirectMessages(ctx context.Context, arg GetDirectMessagesParams) ([]GetDirectMessagesRow, error) {
-	rows, err := q.query(ctx, q.getDirectMessagesStmt, getDirectMessages, arg.UserID, arg.ContactID)
+	rows, err := q.query(ctx, q.getDirectMessagesStmt, getDirectMessages, arg.UserID, arg.ContactID, arg.Offset)
 	if err != nil {
 		return nil, err
 	}

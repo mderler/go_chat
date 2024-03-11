@@ -86,8 +86,13 @@ templ Show(user model.GetUserForChatByIdRow, chatParams ChatParams, contactedUse
 			socket.onmessage = (event) => {
 				const message = unpackMessage(event.data)
 
-				if (messageContainer) {
-					messageContainer.innerHTML += message.text
+				if (!messageContainer) {
+					return
+				}
+
+				messageContainer.innerHTML += message.text
+				if (messageContainer.scrollHeight - messageContainer.scrollTop < 1000) {
+					messageContainer.scrollTop = messageContainer.scrollHeight
 				}
 			}
 

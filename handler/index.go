@@ -39,6 +39,7 @@ func (h *IndexHandler) ShowIndex(c echo.Context) error {
 	messages, err := h.queries.GetDirectMessages(c.Request().Context(), model.GetDirectMessagesParams{
 		UserID:    userID,
 		ContactID: contact.ID,
+		Offset:    0,
 	})
 	if err != nil {
 		log.Printf("Error getting messages: %v", err)
@@ -88,6 +89,7 @@ func (h *IndexHandler) ShowChat(c echo.Context) error {
 	messages, err := h.queries.GetDirectMessages(c.Request().Context(), model.GetDirectMessagesParams{
 		UserID:    userID,
 		ContactID: contactID,
+		Offset:    0,
 	})
 	if err != nil {
 		return render(c, layout.ErrorBase(internalServerError))
@@ -112,6 +114,47 @@ func (h *IndexHandler) ShowChat(c echo.Context) error {
 	}
 
 	return render(c, index.ShowChat(chatParams))
+}
+
+func (h *IndexHandler) ShowMessages(c echo.Context) error {
+	userID := c.Get("userID").(int64)
+	contactQuery := c.QueryParam("contact")
+	page := c.QueryParam("page")
+
+	contactID, err := strconv.ParseInt(contactQuery, 10, 64)
+	if err != nil {
+		return render(c, layout.ErrorBase(badRequest))
+	}
+
+	var pageCount int64 = 0
+	if page != "" {
+		pageCount, err = strconv.ParseInt(page, 10, 64)
+		if err != nil {
+			return render(c, layout.ErrorBase(badRequest))
+		}
+	}
+
+	messages, err := h.queries.GetDirectMessages(c.Request().Context(), model.GetDirectMessagesParams{
+		UserID:    userID,
+		ContactID: contactID,
+		Offset:    pageCount * 25,
+	})
+	if err != nil {
+		return render(c, layout.ErrorBase(internalServerError))
+	}
+
+	var messageViews []index.Message
+
+	for _, message := range messages {
+		messageViews = append(messageViews, index.Message{
+			Author:  message.FullName,
+			Color:   message.Color,
+			Message: message.Content,
+			Left:    message.SenderID != userID,
+		})
+	}
+
+	return render(c, index.ShowMessages(contactID, pageCount+1, messageViews))
 }
 
 func (h *IndexHandler) ShowContactedUsers(c echo.Context) error {

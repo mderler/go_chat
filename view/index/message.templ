@@ -1,15 +1,37 @@
 package index
 
-templ ChatMessage(author string, color string, message string, left bool) {
-	if left {
-		<div class="left-chat">
-			<div class={ "font-bold", textColor(color) }>{ author }</div>
-			<p class="text-white break-words">{ message }</p>
-		</div>
-	} else {
-		<div class="right-chat">
-			<div class={ "font-bold", textColor(color) }>{ author }</div>
-			<p class="text-white break-words">{ message }</p>
-		</div>
+import (
+	"fmt"
+)
+
+type Message struct {
+	Author  string
+	Color   string
+	Message string
+	Left    bool
+}
+
+templ ChatMessage(isLast bool, message Message) {
+	<div
+		class={ templ.KV("left-chat", message.Left), templ.KV("right-chat", !message.Left) }
+		if false {
+			onload="this.scrollIntoView({ behavior: 'smooth' })"
+		}
+	>
+		<div class={ "font-bold", textColor(message.Color) }>{ message.Author }</div>
+		<p class="text-white break-words">{ message.Message }</p>
+	</div>
+}
+
+templ ShowMessages(contactID int64, page int64, messages []Message) {
+	if len(messages) == 25 {
+		<div
+			hx-get={ fmt.Sprintf("/messages?contact=%d&page=%d", contactID, page) }
+			hx-trigger="intersect once"
+			hx-swap="outerHTML scroll:bottom"
+		></div>
+	}
+	for i, m := range messages {
+		@ChatMessage(i == len(messages)-1, m)
 	}
 }
