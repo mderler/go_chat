@@ -2,11 +2,17 @@ package index
 
 import (
 	"github.com/mderler/go_chat/model"
+	"fmt"
 )
 
 templ ShowContactedUsers(contactedUsers []model.GetContactedUsersRow) {
 	for _, user := range contactedUsers {
-		<div class="border border-black rounded-md flex px-1 py-1 hover:border-white cursor-pointer">
+		<div
+			class="border border-black rounded-md flex px-1 py-1 hover:border-white cursor-pointer"
+			hx-get={ fmt.Sprintf("/chat?contact=%d", user.ID) }
+			hx-trigger="click"
+			hx-target="#chat-container"
+		>
 			@userIcon(user.FullName, user.Color)
 			<span>{ user.FullName }</span>
 		</div>
