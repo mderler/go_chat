@@ -2,6 +2,7 @@ package handler
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"strconv"
 
@@ -166,4 +167,25 @@ func (h *IndexHandler) ShowContactedUsers(c echo.Context) error {
 	}
 
 	return render(c, index.ShowContactedUsers(contacedUsers))
+}
+
+func (h *IndexHandler) ShowNewChat(c echo.Context) error {
+	return render(c, index.ShowNewChat())
+}
+
+func (h *IndexHandler) ShowNewGroup(c echo.Context) error {
+	return render(c, index.ShowNewGroup())
+}
+
+func (h *IndexHandler) ShowUserList(c echo.Context) error {
+	userID := c.Get("userID").(int64)
+	query := fmt.Sprintf("%%%s%%", c.QueryParam("q"))
+
+	users, err := h.queries.GetUsersByQuery(c.Request().Context(), model.GetUsersByQueryParams{Name: query, ID: userID})
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+
+	return render(c, index.ShowUserList(users))
 }

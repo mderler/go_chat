@@ -85,7 +85,7 @@ func ShowChat(chatParams ChatParams) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div><img class=\"htmx-indicator\" src=\"/public/spinner.gif\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div class=\"mt-auto mx-5 mb-3 shadow-lg bg-slate-900 rounded-md px-2 pt-2 pb-1 flex flex-col align-middle\"><textarea class=\"w-full bg-slate-900 text-white chat-input outline-none\" placeholder=\"Type a message...\"></textarea></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

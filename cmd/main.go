@@ -63,14 +63,14 @@ func main() {
 	authGroup := e.Group("")
 	authGroup.Use(handler.CookieAuth)
 
-	userHandler := handler.NewUserHandler(queries)
-	authGroup.GET("/user", userHandler.ShowUserList)
-
 	indexHandler := handler.NewIndexHandler(queries)
 
 	authGroup.GET("/", indexHandler.ShowIndex)
 	authGroup.GET("/chat", indexHandler.ShowChat)
 	authGroup.GET("/messages", indexHandler.ShowMessages)
+	authGroup.GET("/user", indexHandler.ShowUserList)
+	authGroup.GET("/new-chat", indexHandler.ShowNewChat)
+	authGroup.GET("/new-group", indexHandler.ShowNewGroup)
 
 	authGroup.GET("/ws", func(c echo.Context) error {
 		userID := c.Get("userID").(int64)
